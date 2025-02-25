@@ -25,6 +25,7 @@ public class SpawnManagerX : MonoBehaviour
     }
     void Update()
     {
+        // A new wave spawns when the player gets a powerup - Abdulla
         enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
 
         if (enemyCount == 0)
@@ -54,12 +55,14 @@ public class SpawnManagerX : MonoBehaviour
         }
 
         // Spawn number of enemy balls based on wave number
+        //2 enemies are spawned in every wave - Abdulla
         for (int i = 0; i < enemiesToSpawn; i++)
         {
             Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
         }
 
         waveCount++;
+        //Bonus: The enemies never get more difficult - Abdulla
         enemy.speedIncrease();
         ResetPlayerPosition(); // put player back at start
 

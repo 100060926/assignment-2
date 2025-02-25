@@ -12,6 +12,7 @@ public class EnemyX : MonoBehaviour
     void Start()
     {
         enemyRb = GetComponent<Rigidbody>();
+        //The enemy balls are not moving anywhere - Abdulla
         playerGoal = GameObject.Find("Player Goal");
     }
 

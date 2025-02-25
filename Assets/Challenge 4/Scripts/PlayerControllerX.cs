@@ -27,6 +27,8 @@ public class PlayerControllerX : MonoBehaviour
     {
         // Add force to player in direction of the focal point (and camera)
         float verticalInput = Input.GetAxis("Vertical");
+
+        //Bonus: The player needs a turbo boost - Abdulla
         if (Input.GetKeyDown(KeyCode.Space) && turboCharged == false){
             turboBoostParticle.Play();
             turboCharged = true;
@@ -45,9 +47,11 @@ public class PlayerControllerX : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
+
             Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
+            // The powerup never goes away - Abdulla
             StartCoroutine(PowerupCooldown());
         }
     }
@@ -73,6 +77,7 @@ public class PlayerControllerX : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
+            // Hitting an enemy sends it back towards you - Abdulla
             Vector3 awayFromPlayer =  other.gameObject.transform.position - transform.position; 
            
             if (hasPowerup) // if have powerup hit enemy with powerup force
