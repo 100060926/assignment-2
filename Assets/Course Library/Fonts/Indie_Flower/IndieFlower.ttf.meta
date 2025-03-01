@@ -1,22 +1,3 @@
-fileFormatVersion: 2
-guid: 1e2dedf0209f94b3a970377b23a013a9
-TrueTypeFontImporter:
-  externalObjects: {}
-  serializedVersion: 4
-  fontSize: 16
-  forceTextureCase: -2
-  characterSpacing: 0
-  characterPadding: 1
-  includeFontData: 1
-  fontName: Indie Flower
-  fontNames:
-  - Indie Flower
-  fallbackFontReferences: []
-  customCharacters: 
-  fontRenderingMode: 0
-  ascentCalculationMode: 1
-  useLegacyBoundsCalculation: 0
-  shouldRoundAdvanceValue: 1
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:21e89ae9168ec262cca0dd996d99aada7d35fd5d0f4b121602a3e5561db70030
+size 524
