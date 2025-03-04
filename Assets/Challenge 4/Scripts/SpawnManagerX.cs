@@ -13,20 +13,14 @@ public class SpawnManagerX : MonoBehaviour
 
     public int enemyCount;
     public int waveCount = 1;
-    private EnemyX enemy;
 
 
-    public GameObject player;
+    public GameObject player; 
 
     // Update is called once per frame
-    void Start()
-    {
-        enemy = enemyPrefab.GetComponent<EnemyX>();
-    }
     void Update()
     {
-        // A new wave spawns when the player gets a powerup - Abdulla
-        enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        enemyCount = GameObject.FindGameObjectsWithTag("Powerup").Length;
 
         if (enemyCount == 0)
         {
@@ -55,15 +49,12 @@ public class SpawnManagerX : MonoBehaviour
         }
 
         // Spawn number of enemy balls based on wave number
-        //2 enemies are spawned in every wave - Abdulla
-        for (int i = 0; i < enemiesToSpawn; i++)
+        for (int i = 0; i < 2; i++)
         {
             Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
         }
 
         waveCount++;
-        //Bonus: The enemies never get more difficult - Abdulla
-        enemy.speedIncrease();
         ResetPlayerPosition(); // put player back at start
 
     }
@@ -71,7 +62,7 @@ public class SpawnManagerX : MonoBehaviour
     // Move player back to position in front of own goal
     void ResetPlayerPosition ()
     {
-        player.transform.position = new Vector3(-35, -43.6f, -2);
+        player.transform.position = new Vector3(0, 1, -7);
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 

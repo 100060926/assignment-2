@@ -10,12 +10,10 @@ public class PlayerControllerX : MonoBehaviour
 
     public bool hasPowerup;
     public GameObject powerupIndicator;
-    private int powerUpDuration = 5;
+    public int powerUpDuration = 5;
 
     private float normalStrength = 10; // how hard to hit enemy without powerup
     private float powerupStrength = 25; // how hard to hit enemy with powerup
-    public ParticleSystem turboBoostParticle;
-    private bool turboCharged = false;
     
     void Start()
     {
@@ -27,14 +25,6 @@ public class PlayerControllerX : MonoBehaviour
     {
         // Add force to player in direction of the focal point (and camera)
         float verticalInput = Input.GetAxis("Vertical");
-
-        //Bonus: The player needs a turbo boost - Abdulla
-        if (Input.GetKeyDown(KeyCode.Space) && turboCharged == false){
-            turboBoostParticle.Play();
-            turboCharged = true;
-            speed = speed*2;
-            StartCoroutine(boost());
-        }
         playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime); 
 
         // Set powerup indicator position to beneath player
@@ -47,20 +37,10 @@ public class PlayerControllerX : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Powerup"))
         {
-
             Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
-            // The powerup never goes away - Abdulla
-            StartCoroutine(PowerupCooldown());
         }
-    }
-
-    IEnumerator boost() {
-        yield return new WaitForSeconds(1.0f);
-        turboBoostParticle.Stop();
-        turboCharged = false;
-        speed = speed/2; 
     }
 
     // Coroutine to count down powerup duration
@@ -77,8 +57,7 @@ public class PlayerControllerX : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
-            // Hitting an enemy sends it back towards you - Abdulla
-            Vector3 awayFromPlayer =  other.gameObject.transform.position - transform.position; 
+            Vector3 awayFromPlayer =  transform.position - other.gameObject.transform.position; 
            
             if (hasPowerup) // if have powerup hit enemy with powerup force
             {

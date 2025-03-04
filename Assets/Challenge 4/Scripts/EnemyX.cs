@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyX : MonoBehaviour
 {
-    public float speed = 100;
+    public float speed;
     private Rigidbody enemyRb;
     private GameObject playerGoal;
 
@@ -12,8 +12,6 @@ public class EnemyX : MonoBehaviour
     void Start()
     {
         enemyRb = GetComponent<Rigidbody>();
-        //The enemy balls are not moving anywhere - Abdulla
-        playerGoal = GameObject.Find("Player Goal");
     }
 
     // Update is called once per frame
@@ -23,9 +21,6 @@ public class EnemyX : MonoBehaviour
         Vector3 lookDirection = (playerGoal.transform.position - transform.position).normalized;
         enemyRb.AddForce(lookDirection * speed * Time.deltaTime);
 
-    }
-    public void speedIncrease() {
-        speed+=50;
     }
 
     private void OnCollisionEnter(Collision other)
