@@ -30,12 +30,14 @@ public class SpawnManagerX : MonoBehaviour
     }
 
     // Generate random spawn position for powerups and enemy balls
-    Vector3 GenerateSpawnPosition ()
+    Vector3 GenerateSpawnPosition()
     {
-        float xPos = Random.Range(-spawnRangeX, spawnRangeX);
-        float zPos = Random.Range(spawnZMin, spawnZMax);
-        return new Vector3(xPos, 0, zPos);
+        float xOffset = Random.Range(-spawnRangeX, spawnRangeX); // Random X offset
+        float zOffset = Random.Range(-spawnZMax, -spawnZMin); // Random Z offset to keep them around the player
+
+        return player.transform.position + new Vector3(xOffset, 0, zOffset); // Spawn relative to player -Hoor
     }
+
 
 
     void SpawnEnemyWave(int enemiesToSpawn)
@@ -62,7 +64,7 @@ public class SpawnManagerX : MonoBehaviour
     // Move player back to position in front of own goal
     void ResetPlayerPosition ()
     {
-        player.transform.position = new Vector3(0, 1, -7);
+        player.transform.position = new Vector3(-48, -40, 6);
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 

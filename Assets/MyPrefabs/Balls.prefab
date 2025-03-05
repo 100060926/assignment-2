@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Balls
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7129881174872474271, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
@@ -72,10 +76,10 @@ PrefabInstance:
       addedObject: {fileID: -6554383331774291172}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -1194974599714737532}
+      addedObject: {fileID: 2454336944827676630}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2454336944827676630}
+      addedObject: {fileID: -4199284201557954854}
   m_SourcePrefab: {fileID: 100100000, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
 --- !u!1 &5145539264275527274 stripped
 GameObject:
@@ -163,19 +167,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-1194974599714737532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5145539264275527274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bf08be53e5fe7f4ea2286941c2da25d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 3
 --- !u!135 &2454336944827676630
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -197,3 +188,19 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5678624
   m_Center: {x: 0.00009274483, y: 0, z: 0.57553804}
+--- !u!114 &-4199284201557954854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5145539264275527274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb12be123aa5dc64488f9d1ca18e9452, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 3
+  playerGoal: {fileID: 0}
+  enemyGoal: {fileID: 0}
+  gameManager: {fileID: 0}
