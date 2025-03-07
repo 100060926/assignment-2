@@ -41,17 +41,10 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-<<<<<<< Updated upstream
         float distanceToPlayer = Vector3.Distance(player.position, basket.position); // Distance between player & basket
         float angleToPlayer = Vector3.Angle(transform.forward, (player.position - transform.position).normalized);
 
         // Check if the player is near the basket AND facing the kitty
-=======
-        float distanceToPlayer = Vector3.Distance(player.position, basket.position);
-        float angleToPlayer = Vector3.Angle(transform.forward, (player.position - transform.position).normalized);
-
-        // Start chasing if player is too close AND facing the cat
->>>>>>> Stashed changes
         if (distanceToPlayer <= chaseRange && angleToPlayer < fieldOfView / 2)
         {
             StartChase();
@@ -61,11 +54,7 @@ public class EnemyAI : MonoBehaviour
             StopChase();
         }
 
-<<<<<<< Updated upstream
         // Keep patrolling if not chasing
-=======
-        // Patrol if not chasing and agent has reached the patrol point
->>>>>>> Stashed changes
         if (!isChasing && !agent.pathPending && agent.remainingDistance < 0.5f)
         {
             MoveToNextPatrolPoint();
@@ -77,21 +66,11 @@ public class EnemyAI : MonoBehaviour
         if (patrolPoints.Length == 0) return; // No patrol points? Do nothing
 
         agent.speed = patrolSpeed; // Set patrol speed
-<<<<<<< Updated upstream
         agent.destination = patrolPoints[currentPatrolIndex].position; // Move to patrol point
-=======
-
-        // Move to patrol point
-        agent.SetDestination(patrolPoints[currentPatrolIndex].position);
->>>>>>> Stashed changes
 
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length; // Loop patrol points
     }
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     private void StartChase()
     {
         isChasing = true;
