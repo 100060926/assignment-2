@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour
     private int playerGoalCount = 0; // Count of how many balls entered the Player Goal
 
     public int gameOverThreshold = 5; // Number of balls needed to end the game
-    private int maxWaves = 5;         // Total waves in the game
-    private int currentWave = 0;      // Tracks the current wave
 
     public Text playerScoreText; // UI Text for Player Score
     public Text enemyScoreText;  // UI Text for Enemy Score
@@ -51,12 +49,11 @@ public class GameManager : MonoBehaviour
 
             if (playerGoalCount >= gameOverThreshold)
             {
-                EndGame(false); // Player loses
+                EndGame();
             }
         }
 
         UpdateScoreUI();
-        CheckForWinCondition();
     }
 
     void UpdateScoreUI()
@@ -72,40 +69,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void WaveCompleted()
-    {
-        currentWave++;
-        Debug.Log("Wave " + currentWave + " completed.");
-
-        if (currentWave >= maxWaves)
-        {
-            CheckForWinCondition();
-        }
-    }
-
-    void CheckForWinCondition()
-    {
-        if (currentWave >= maxWaves && AreAllEnemiesDestroyed())
-        {
-            EndGame(true); // Player wins
-        }
-    }
-
-    void EndGame(bool playerWon)
+    void EndGame()
     {
         gameOver = true;
+        Debug.Log("Game Over! The enemy has won.");
 
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(true);
-            gameOverText.text = playerWon ? "Victory! You Survived All Waves!" : "Game Over! Enemy Wins!";
+            gameOverText.text = "Game Over! Enemy Wins!";
         }
         else
         {
             Debug.LogError("Game Over Text UI reference is missing!");
         }
 
-        // Stop enemy spawning
+        // Stop the SpawnManager from creating more enemies
         if (spawnManager != null)
         {
             Debug.Log("Stopping enemy spawning...");
@@ -116,10 +95,10 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("SpawnManager reference is missing!");
         }
 
-        // Stop all enemy movement
+        // Stop all enemy movement (disable their scripts)
         DisableAllEnemies();
 
-        Debug.Log(playerWon ? "Player Wins! All waves survived." : "Game Over! The enemy has won.");
+        Debug.Log("All enemies disabled. Game Over.");
     }
 
     void DisableAllEnemies()
@@ -129,19 +108,14 @@ public class GameManager : MonoBehaviour
 
         foreach (EnemyPlayerFollower enemy in playerFollowers)
         {
-            enemy.enabled = false;
+            enemy.enabled = false; // Disable enemy script
         }
 
         foreach (EnemyGoalFollower enemy in goalSeekers)
         {
-            enemy.enabled = false;
+            enemy.enabled = false; // Disable enemy script
         }
 
         Debug.Log("Disabled all active enemies.");
-    }
-
-    bool AreAllEnemiesDestroyed()
-    {
-        return FindObjectsOfType<EnemyPlayerFollower>().Length == 0 && FindObjectsOfType<EnemyGoalFollower>().Length == 0;
     }
 }
