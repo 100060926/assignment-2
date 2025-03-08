@@ -16,14 +16,14 @@ public class EnemyAI : MonoBehaviour
     public float chaseSpeed = 4f; // Speed when chasing
 
     private NavMeshAgent agent;
-    private bool isChasing = false; 
-    private float wanderTimer; 
-    private static int kittyCounter = 0; 
+    private bool isChasing = false;
+    private float wanderTimer;
+    private static int kittyCounter = 0;
 
-    private Animator animator; 
-    private static Text kittyCounterUI; 
+    private Animator animator;
+    private static Text kittyCounterUI;
 
-    private bool isCounted = false; // ✅ Prevents multiple counting of a single Kitty
+    private bool hasBeenCounted = false; // Prevents multiple counts
 
     void Start()
     {
@@ -32,10 +32,11 @@ public class EnemyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         wanderTimer = wanderTime;
 
-        if (!isCounted) // Ensure Kitty is only counted once
+        // Ensure Kitty is counted ONLY ONCE when spawned
+        if (!hasBeenCounted)
         {
             IncreaseKittyCount(1);
-            isCounted = true;
+            hasBeenCounted = true;
         }
 
         Debug.Log("Kitty Spawned! Total Kitties: " + kittyCounter);
@@ -55,6 +56,8 @@ public class EnemyAI : MonoBehaviour
             if (patrolPoints.Length > 0) PatrolWithWaypoints();
             else WanderWithinRadius();
         }
+
+        animator.SetFloat("Speed", agent.velocity.magnitude);
     }
 
     private void PatrolWithWaypoints()
@@ -74,7 +77,7 @@ public class EnemyAI : MonoBehaviour
             Vector3 randomDirection = Random.insideUnitSphere * wanderRadius + transform.position;
             if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, wanderRadius, NavMesh.AllAreas))
                 agent.SetDestination(hit.position);
-            
+
             wanderTimer = wanderTime;
         }
     }
@@ -96,16 +99,17 @@ public class EnemyAI : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (isCounted)
+        //Ensure the counter decreases properly when a Kitty is removed
+        if (hasBeenCounted)
         {
             IncreaseKittyCount(-1);
-            isCounted = false;
+            hasBeenCounted = false;
         }
 
         Debug.Log("Kitty Removed! Total Kitties Left: " + kittyCounter);
     }
 
-    public static int GetKittyCount() => kittyCounter; 
+    public static int GetKittyCount() => kittyCounter;
 
     public static void IncreaseKittyCount(int amount)
     {
@@ -119,3 +123,4 @@ public class EnemyAI : MonoBehaviour
         if (kittyCounterUI != null) kittyCounterUI.text = "Kitties: " + kittyCounter;
     }
 }
+

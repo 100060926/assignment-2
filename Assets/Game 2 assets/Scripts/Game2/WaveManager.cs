@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 public class WaveManager : MonoBehaviour
 {
-    public GameObject enemyPrefab; 
-    public Transform[] spawnPoints; 
-    public Transform[] patrolPoints; 
-    public Transform player; 
-    public Text kittyCounterText; 
+    public GameObject enemyPrefab;
+    public Transform[] spawnPoints;
+    public Transform[] patrolPoints;
+    public Transform player;
+    public Text kittyCounterText;
 
     public float spawnInterval = 10f;
 
@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour
                 }
             }
 
-            EnemyAI.IncreaseKittyCount(spawnedKitties);
+            // ✅ Ensure the counter updates correctly
             UpdateKittyCounterUI();
         }
     }
