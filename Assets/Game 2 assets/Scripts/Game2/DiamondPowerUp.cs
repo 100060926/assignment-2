@@ -1,16 +1,22 @@
 using UnityEngine;
 using System.Collections;
-
+//shahad
 public class DiamondPowerUp : MonoBehaviour
 {
     [Header("Power-Up Settings")]
     public float powerUpDuration = 5f; // Duration of the power-up effect
-    public float pushRadius = 7f; // ✅ Increased radius to affect more enemies
-    public float powerupStrength = 40f; // ✅ Stronger push force for a visible effect
+    public float pushRadius = 10f; // Radius in which enemies are affected
+    public float powerupStrength = 50f; // Stronger push force for a visible effect
     public GameObject powerupIndicator; // UI indicator for power-up
-    public ParticleSystem powerupParticle; // 🌟 Particle effect surrounding the player
+    public ParticleSystem powerupParticle; //Particle effect surrounding the player
 
     private bool hasPowerup = false; // Tracks whether power-up is active
+
+    void Start()
+    {
+        //Ensure the Diamond starts as ACTIVE when the game begins
+        gameObject.SetActive(true);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,26 +29,26 @@ public class DiamondPowerUp : MonoBehaviour
 
             if (powerupParticle != null)
             {
-                powerupParticle.Play(); // 🌟 Start particle effect on player
+                powerupParticle.Play(); //Start particle effect on player
             }
 
-            gameObject.SetActive(false); // 💎 Make the Diamond disappear
-
-            PushNearbyEnemies(other.transform.position); // 🚀 Immediately push all nearby enemies away
+            gameObject.SetActive(false); //Make the Diamond disappear
 
             StartCoroutine(PowerupCooldown()); // Start power-up timer
+
+            PushNearbyEnemies(other.transform.position); //Immediately push all nearby enemies away
         }
     }
 
     IEnumerator PowerupCooldown()
     {
-        yield return new WaitForSeconds(powerUpDuration); // ⏳ Wait 5 seconds
+        yield return new WaitForSeconds(powerUpDuration); // Wait 5 seconds
         hasPowerup = false; // Disable power-up
         powerupIndicator.SetActive(false); // Hide UI effect
 
         if (powerupParticle != null)
         {
-            powerupParticle.Stop(); // ❌ Stop particle effect
+            powerupParticle.Stop(); //Stop particle effect
         }
 
         Debug.Log("Power-up expired!");
@@ -60,9 +66,12 @@ public class DiamondPowerUp : MonoBehaviour
 
                 if (enemyRigidbody != null)
                 {
-                    // ✅ Push the enemy directly away from the player with strong force
+                    //Ensure Rigidbody is NOT Kinematic
+                    enemyRigidbody.isKinematic = false;
+
+                    // Push the enemy directly away from the player with strong force
                     Vector3 pushDirection = (collider.transform.position - playerPosition).normalized;
-                    enemyRigidbody.AddForce(pushDirection * powerupStrength, ForceMode.Impulse);
+                    enemyRigidbody.AddForce(pushDirection * powerupStrength, ForceMode.VelocityChange);
 
                     Debug.Log("Kitty pushed FAR AWAY due to power-up!");
                 }

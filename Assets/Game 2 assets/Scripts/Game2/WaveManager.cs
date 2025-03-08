@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour
                 }
             }
 
-            // ✅ Ensure the counter updates correctly
+            // Ensure the counter updates correctly
             UpdateKittyCounterUI();
         }
     }
