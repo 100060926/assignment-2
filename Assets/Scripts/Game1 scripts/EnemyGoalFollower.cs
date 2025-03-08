@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class EnemyGoalFollower : MonoBehaviour
 {
-    public float speed = 3.0f;
+    public float speed = 3.0f; // Normal speed
+    public float goalSpeed = 4.5f; // Faster speed after being redirected
     private Rigidbody enemyRb;
     public Transform playerGoal;
     public Transform enemyGoal;
     private GameManager gameManager;
-    private bool isMovingToEnemyGoal = false;
+    private bool isMovingToEnemyGoal = false; // Determines if moving to enemy goal
 
     void Start()
     {
@@ -26,8 +27,10 @@ public class EnemyGoalFollower : MonoBehaviour
     void MoveTowardsGoal(Transform goal)
     {
         if (goal == null) return;
+
+        float currentSpeed = isMovingToEnemyGoal ? goalSpeed : speed;
         Vector3 direction = (goal.position - transform.position).normalized;
-        enemyRb.linearVelocity = direction * speed;
+        enemyRb.linearVelocity = direction * currentSpeed;
     }
 
     private void OnCollisionEnter(Collision other)

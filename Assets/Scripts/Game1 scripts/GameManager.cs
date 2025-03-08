@@ -49,11 +49,12 @@ public class GameManager : MonoBehaviour
 
             if (playerGoalCount >= gameOverThreshold)
             {
-                EndGame();
+                EndGame(false); // Player loses
             }
         }
 
         UpdateScoreUI();
+        CheckForGameEnd();
     }
 
     void UpdateScoreUI()
@@ -69,22 +70,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void EndGame()
+    public void CheckForGameEnd()
+    {
+        if (playerGoalCount >= gameOverThreshold)
+        {
+            EndGame(false); // Player loses if 5 balls enter their goal
+        }
+        else if (spawnManager.AreAllEnemiesDestroyed() && spawnManager.NoMoreWavesLeft())
+        {
+            EndGame(true); // Player wins if all waves are completed and no enemies remain
+        }
+    }
+
+    void EndGame(bool playerWon)
     {
         gameOver = true;
-        Debug.Log("Game Over! The enemy has won.");
+        Debug.Log("Game Over! " + (playerWon ? "Player Wins!" : "Enemy Wins!"));
 
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(true);
-            gameOverText.text = "Game Over! Enemy Wins!";
+            gameOverText.text = playerWon ? "Victory! You Survived All Waves!" : "Game Over! Enemy Wins!";
         }
         else
         {
             Debug.LogError("Game Over Text UI reference is missing!");
         }
 
-        // Stop the SpawnManager from creating more enemies
+        // Stop enemy spawning
         if (spawnManager != null)
         {
             Debug.Log("Stopping enemy spawning...");
@@ -95,27 +108,75 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning("SpawnManager reference is missing!");
         }
 
-        // Stop all enemy movement (disable their scripts)
+        // Stop all enemy movement
         DisableAllEnemies();
 
-        Debug.Log("All enemies disabled. Game Over.");
+        Debug.Log(playerWon ? "Player Wins! All waves survived." : "Game Over! The enemy has won.");
     }
 
     void DisableAllEnemies()
     {
         EnemyPlayerFollower[] playerFollowers = FindObjectsOfType<EnemyPlayerFollower>();
         EnemyGoalFollower[] goalSeekers = FindObjectsOfType<EnemyGoalFollower>();
+        ShieldedEnemy[] shieldedEnemies = FindObjectsOfType<ShieldedEnemy>();
+        SpeedBoosterEnemy[] speedBoosters = FindObjectsOfType<SpeedBoosterEnemy>();
 
         foreach (EnemyPlayerFollower enemy in playerFollowers)
         {
-            enemy.enabled = false; // Disable enemy script
+            enemy.enabled = false;
         }
 
         foreach (EnemyGoalFollower enemy in goalSeekers)
         {
-            enemy.enabled = false; // Disable enemy script
+            enemy.enabled = false;
+        }
+
+        foreach (ShieldedEnemy enemy in shieldedEnemies)
+        {
+            enemy.enabled = false;
+        }
+
+        foreach (SpeedBoosterEnemy enemy in speedBoosters)
+        {
+            enemy.enabled = false;
         }
 
         Debug.Log("Disabled all active enemies.");
+    }
+    public void GameOver(bool playerWon)
+    {
+        gameOver = true;
+        Debug.Log("Game Over! " + (playerWon ? "Player Wins!" : "Enemy Wins!"));
+
+        if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(true);
+            gameOverText.text = playerWon ? "Victory! You Survived All Waves!" : "Game Over! Enemy Wins!";
+        }
+        else
+        {
+            Debug.LogError("Game Over Text UI reference is missing!");
+        }
+
+        // Stop enemy spawning
+        if (spawnManager != null)
+        {
+            Debug.Log("Stopping enemy spawning...");
+            spawnManager.StopSpawning();
+        }
+        else
+        {
+            Debug.LogWarning("SpawnManager reference is missing!");
+        }
+
+        // Stop all enemy movement
+        DisableAllEnemies();
+
+        Debug.Log(playerWon ? "Player Wins! All waves survived." : "Game Over! The enemy has won.");
+    }
+
+    public bool PlayerHasLost()
+    {
+        return playerGoalCount >= gameOverThreshold;
     }
 }
