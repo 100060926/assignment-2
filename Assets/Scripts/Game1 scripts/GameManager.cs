@@ -46,15 +46,10 @@ public class GameManager : MonoBehaviour
             enemyScore += points;
             playerGoalCount += points; // Track how many balls entered the player's goal
             Debug.Log("Enemy scored! Current Enemy Score: " + enemyScore + " | Player Goal Count: " + playerGoalCount);
-
-            if (playerGoalCount >= gameOverThreshold)
-            {
-                EndGame(false); // Player loses
-            }
         }
 
         UpdateScoreUI();
-        CheckForGameEnd();
+        CheckForGameEnd(); // Check if the game should end after updating the score
     }
 
     void UpdateScoreUI()
@@ -72,19 +67,23 @@ public class GameManager : MonoBehaviour
 
     public void CheckForGameEnd()
     {
+        if (gameOver) return; // Prevent checking if the game is already over
+
         if (playerGoalCount >= gameOverThreshold)
         {
             EndGame(false); // Player loses if 5 balls enter their goal
         }
-        else if (spawnManager.AreAllEnemiesDestroyed() && spawnManager.NoMoreWavesLeft())
+        else if (spawnManager != null && spawnManager.AreAllEnemiesDestroyed())
         {
             EndGame(true); // Player wins if all waves are completed and no enemies remain
         }
     }
 
-    void EndGame(bool playerWon)
+    public void EndGame(bool playerWon)
     {
+        if (gameOver) return; // Prevent multiple calls
         gameOver = true;
+
         Debug.Log("Game Over! " + (playerWon ? "Player Wins!" : "Enemy Wins!"));
 
         if (gameOverText != null)
@@ -142,37 +141,6 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log("Disabled all active enemies.");
-    }
-    public void GameOver(bool playerWon)
-    {
-        gameOver = true;
-        Debug.Log("Game Over! " + (playerWon ? "Player Wins!" : "Enemy Wins!"));
-
-        if (gameOverText != null)
-        {
-            gameOverText.gameObject.SetActive(true);
-            gameOverText.text = playerWon ? "Victory! You Survived All Waves!" : "Game Over! Enemy Wins!";
-        }
-        else
-        {
-            Debug.LogError("Game Over Text UI reference is missing!");
-        }
-
-        // Stop enemy spawning
-        if (spawnManager != null)
-        {
-            Debug.Log("Stopping enemy spawning...");
-            spawnManager.StopSpawning();
-        }
-        else
-        {
-            Debug.LogWarning("SpawnManager reference is missing!");
-        }
-
-        // Stop all enemy movement
-        DisableAllEnemies();
-
-        Debug.Log(playerWon ? "Player Wins! All waves survived." : "Game Over! The enemy has won.");
     }
 
     public bool PlayerHasLost()

@@ -151,8 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7504042ff1b0f974ca8c59f1a1677f6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  normalSpeed: 3
-  slowSpeed: 1.5
+  speed: 3
+  goalSpeed: 2
+  enemyGoalSpeed: 3.5
   shieldEffect: {fileID: 4427492317601570067}
   shieldBreakEffect: {fileID: 4687129533441402993}
 --- !u!1001 &1279067556343501117
@@ -166,6 +167,18 @@ PrefabInstance:
     - target: {fileID: 3220555201551092782, guid: 43f37a6e297c6054fbae69fbb7665602, type: 3}
       propertyPath: m_Name
       value: Shield
+      objectReference: {fileID: 0}
+    - target: {fileID: 5328619360272447890, guid: 43f37a6e297c6054fbae69fbb7665602, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.002225338
+      objectReference: {fileID: 0}
+    - target: {fileID: 5328619360272447890, guid: 43f37a6e297c6054fbae69fbb7665602, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.0020472582
+      objectReference: {fileID: 0}
+    - target: {fileID: 5328619360272447890, guid: 43f37a6e297c6054fbae69fbb7665602, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.002225338
       objectReference: {fileID: 0}
     - target: {fileID: 5328619360272447890, guid: 43f37a6e297c6054fbae69fbb7665602, type: 3}
       propertyPath: m_LocalPosition.x

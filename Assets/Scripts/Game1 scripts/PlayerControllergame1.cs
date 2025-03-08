@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class PlayerControllergame1 : MonoBehaviour
 {
     private Rigidbody playerRb;
@@ -16,6 +17,8 @@ public class PlayerControllergame1 : MonoBehaviour
     private float normalStrength = 10; // how hard to hit enemy without powerup
     private float powerupStrength = 25; // how hard to hit enemy with powerup
 
+    private bool isFrozen = false; // Track if the player is frozen
+
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
@@ -24,6 +27,8 @@ public class PlayerControllergame1 : MonoBehaviour
 
     void Update()
     {
+        if (isFrozen) return; // Skip movement if frozen
+
         // Activate brake when pressing 'E' -Hoor
         if (Input.GetKey(KeyCode.E))
         {
@@ -57,6 +62,7 @@ public class PlayerControllergame1 : MonoBehaviour
             Destroy(other.gameObject);
             hasPowerup = true;
             powerupIndicator.SetActive(true);
+            StartCoroutine(PowerupCooldown());
         }
     }
 
@@ -85,5 +91,19 @@ public class PlayerControllergame1 : MonoBehaviour
                 enemyRigidbody.AddForce(awayFromPlayer * normalStrength, ForceMode.Impulse);
             }
         }
+    }
+
+    // Freeze the player's vertical input for 2 seconds
+    public void FreezePlayer()
+    {
+        StartCoroutine(DisableVerticalInputForSeconds(5f));
+    }
+
+    // Coroutine to disable vertical input for a specified duration
+    private IEnumerator DisableVerticalInputForSeconds(float seconds)
+    {
+        isFrozen = true; // Disable vertical input
+        yield return new WaitForSeconds(seconds); // Wait for the specified duration
+        isFrozen = false; // Re-enable vertical input
     }
 }

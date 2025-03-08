@@ -13,12 +13,20 @@ public class SpawnManagerGame1 : MonoBehaviour
 
     private bool stopSpawning = false;        // Flag to control spawning
     private int currentWave = 0;              // Tracks the current wave
-    private int maxWaves = 5;                 // Total number of waves
-    private int maxEnemiesOnField = 5;        // Max number of enemies on the field
+    private int maxWaves = 6;                 // Total number of waves (updated to 7)
+    private int maxEnemiesOnField = 6;        // Max number of enemies on the field (updated to 7)
+
+    private Coroutine waveCoroutine;          // Reference to the wave coroutine
 
     void Start()
     {
-        StartCoroutine(StartWaves());
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager reference is missing in SpawnManagerGame1!");
+            return;
+        }
+
+        waveCoroutine = StartCoroutine(StartWaves());
     }
 
     IEnumerator StartWaves()
@@ -50,36 +58,48 @@ public class SpawnManagerGame1 : MonoBehaviour
                     SpawnEnemy(speedBoosterPrefab, 3, usedSpawnPoints, 5.0f);
                     break;
 
-                case 5: // Mix of 5 enemies at a time (3 rounds)
-                    for (int i = 0; i < 3; i++) // Repeat 3 times
-                    {
-                        int totalEnemies = 5;
-                        while (totalEnemies > 0 && CountEnemies() < maxEnemiesOnField)
-                        {
-                            int enemyType = Random.Range(0, 4);
-                            switch (enemyType)
-                            {
-                                case 0: SpawnEnemy(enemyFollowPrefab, 1, usedSpawnPoints, 4.5f); break;
-                                case 1: SpawnEnemy(enemyGoalPrefab, 1, usedSpawnPoints, 4.5f); break;
-                                case 2: SpawnEnemy(shieldedEnemyPrefab, 1, usedSpawnPoints, 4.0f, 5.0f); break;
-                                case 3: SpawnEnemy(speedBoosterPrefab, 1, usedSpawnPoints, 5.5f); break;
-                            }
-                            totalEnemies--;
-                        }
-                        yield return new WaitForSeconds(10f); // Delay between rounds
-                    }
+                case 5: // Wave 5: 4 enemies (mix of all types)
+                    SpawnMixedEnemies(4, usedSpawnPoints);
                     break;
+
+                case 6: // Wave 6: 5 enemies (mix of all types)
+                    SpawnMixedEnemies(5, usedSpawnPoints);
+                    break;
+
+                //case 7: // Wave 7: 7 enemies (mix of all types)
+                    //SpawnMixedEnemies(7, usedSpawnPoints);
+                    //break;
             }
 
             // Wait until all enemies are destroyed before moving to the next wave
             yield return new WaitUntil(() => AreAllEnemiesDestroyed());
 
             Debug.Log("Wave " + currentWave + " cleared.");
+
+            // Check for game end condition
+            if (gameManager.PlayerHasLost() || NoMoreWavesLeft())
+            {
+                HandleGameEnd();
+                yield break; // Stop coroutine
+            }
+        }
+    }
+
+    void SpawnMixedEnemies(int count, List<int> usedSpawnPoints)
+    {
+        for (int i = 0; i < count && CountEnemies() < maxEnemiesOnField; i++)
+        {
+            int enemyType = Random.Range(0, 4);
+            switch (enemyType)
+            {
+                case 0: SpawnEnemy(enemyFollowPrefab, 1, usedSpawnPoints, 4.5f); break;
+                case 1: SpawnEnemy(enemyGoalPrefab, 1, usedSpawnPoints, 4.5f); break;
+                case 2: SpawnEnemy(shieldedEnemyPrefab, 1, usedSpawnPoints, 4.0f, 5.0f); break;
+                case 3: SpawnEnemy(speedBoosterPrefab, 1, usedSpawnPoints, 5.5f); break;
+            }
         }
 
-        // End game when no more waves
-        Debug.Log("Game Over! Checking if player won...");
-        HandleGameEnd();
+        Debug.Log("Spawned " + count + " mixed enemies in Wave " + currentWave);
     }
 
     void SpawnEnemy(GameObject prefab, int count, List<int> usedSpawnPoints, float speed = 3.0f, float goalSpeed = -1)
@@ -128,7 +148,11 @@ public class SpawnManagerGame1 : MonoBehaviour
 
     public bool AreAllEnemiesDestroyed()
     {
-        return CountEnemies() == 0;
+        // Only count active enemies
+        return FindObjectsOfType<EnemyPlayerFollower>().Length +
+               FindObjectsOfType<EnemyGoalFollower>().Length +
+               FindObjectsOfType<ShieldedEnemy>().Length +
+               FindObjectsOfType<SpeedBoosterEnemy>().Length == 0;
     }
 
     int CountEnemies()
@@ -146,17 +170,33 @@ public class SpawnManagerGame1 : MonoBehaviour
 
     void HandleGameEnd()
     {
+        if (stopSpawning) return; // Prevent multiple calls
+
+        stopSpawning = true;
+
+        // Stop the wave coroutine
+        if (waveCoroutine != null)
+        {
+            StopCoroutine(waveCoroutine);
+        }
+
+        Debug.Log("Game Over! Checking win/loss...");
+
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager reference is missing in SpawnManagerGame1!");
+            return;
+        }
+
         if (gameManager.PlayerHasLost()) // Check if player lost
         {
             Debug.Log("Player Lost! Game Over.");
-            gameManager.GameOver(false);
+            gameManager.EndGame(false);
         }
         else
         {
             Debug.Log("Player Won! Survived all waves.");
-            gameManager.GameOver(true);
+            gameManager.EndGame(true);
         }
-
-        StopSpawning();
     }
 }
