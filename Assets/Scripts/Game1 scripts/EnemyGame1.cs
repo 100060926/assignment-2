@@ -11,6 +11,7 @@ public class EnemyGame1 : MonoBehaviour
     public Transform enemyGoal;   // Reference to enemy's goal
     public GameManager gameManager; // Reference to game manager to track score
     private bool isMovingToGoal = false; // Track if the enemy is moving towards a goal
+    public bool isGoalFollower = false; // Determines if the enemy is a goal follower from the start
 
     void Start()
     {
@@ -21,15 +22,25 @@ public class EnemyGame1 : MonoBehaviour
         // Find goals
         playerGoal = GameObject.Find("PlayerGoal").transform;
         enemyGoal = GameObject.Find("EnemyGoal").transform;
+
+        // If this is a goal follower, set it to move directly toward the enemy goal
+        if (isGoalFollower)
+        {
+            isMovingToGoal = true;
+        }
     }
 
     void Update()
     {
-        // Only follow the player if not moving towards a goal
-        if (!isMovingToGoal)
+        // Move toward the enemy goal if flagged to do so
+        if (isMovingToGoal)
         {
-            Vector3 lookDirection = (player.transform.position - transform.position).normalized;
-            enemyRb.AddForce(lookDirection * speed, ForceMode.Force);
+            MoveTowardsGoal(enemyGoal);
+        }
+        else
+        {
+            // Default behavior is to follow the player
+            MoveTowardsGoal(player.transform);
         }
 
         if (transform.position.y < -50)
@@ -38,43 +49,35 @@ public class EnemyGame1 : MonoBehaviour
         }
     }
 
+    void MoveTowardsGoal(Transform goal)
+    {
+        if (goal == null) return;
+
+        Vector3 direction = (goal.position - transform.position).normalized;
+        enemyRb.linearVelocity = direction * speed;
+    }
+
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            // Stop following the player and move toward the goal
+            // Stop following the player and move toward the enemy goal
             isMovingToGoal = true;
-
-            // Bounce enemy away from the player
-            Vector3 bounceDirection = (transform.position - player.transform.position).normalized;
-            enemyRb.linearVelocity = Vector3.zero; // Reset velocity
-            enemyRb.AddForce(bounceDirection * speed * 2, ForceMode.Impulse);
-
-            // After bounce, set target towards the player's goal
-            StartCoroutine(MoveToGoal());
         }
-    }
-
-    IEnumerator MoveToGoal()
-    {
-        yield return new WaitForSeconds(0.5f); // Short delay before redirecting
-
-        // Move toward the correct goal (Player's goal)
-        Vector3 goalDirection = (playerGoal.position - transform.position).normalized;
-        enemyRb.linearVelocity = Vector3.zero;
-        enemyRb.AddForce(goalDirection * speed * 5, ForceMode.Impulse); // Strong push towards goal
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("EnemyGoal"))
         {
-            gameManager.AddScore(1, "Player"); // Player scores when the ball enters the enemy's goal
+            // If a goal follower reaches the enemy's goal, the enemy team scores
+            gameManager.AddScore(1, "Enemy");
             Destroy(gameObject);
         }
         else if (other.gameObject.CompareTag("PlayerGoal"))
         {
-            gameManager.AddScore(1, "Enemy"); // Enemy scores when the ball enters the player's goal
+            // If any enemy reaches the player's goal, the enemy scores
+            gameManager.AddScore(1, "Enemy");
             Destroy(gameObject);
         }
     }
