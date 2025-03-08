@@ -3,84 +3,112 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Patrolling Settings")]
-    public Transform[] patrolPoints; // 4 patrol points (forming a square)
-    public float patrolSpeed = 2f; // Speed while patrolling
 
-    [Header("Chasing & Detection Settings")]
+    public Transform[] patrolPoints;
+    public float patrolSpeed = 2f; // Speed while patrolling
+    public float wanderRadius = 10f; // Radius within which the Kitty will move if no patrol points exist
+    public float wanderTime = 3f; // Time before picking a new random destination
+
     public Transform player; // Player reference
-    public Transform basket; // The basket being guarded
-    public float chaseRange = 5f; // Distance to start chasing
-    public float fieldOfView = 60f; // Angle to detect if player is facing the kitty
+    public float chaseRange = 3f; // Distance to start chasing
     public float chaseSpeed = 4f; // Speed while chasing
 
     private NavMeshAgent agent;
-    private int currentPatrolIndex = 0;
     private bool isChasing = false;
+    private float wanderTimer;
+    
+    private static int kittyCounter = 1; // Starts at 1 since one Kitty exists at game start
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>(); // Get the NavMeshAgent
+        agent = GetComponent<NavMeshAgent>();
         agent.speed = patrolSpeed; // Set patrol speed
 
-        if (patrolPoints.Length > 0) // Ensure patrol points exist
-        {
-            MoveToNextPatrolPoint(); // Start patrolling
-        }
-        else
-        {
-            Debug.LogError("No patrol points assigned to " + gameObject.name);
-        }
+        wanderTimer = wanderTime; // Start wandering immediately
+
+        kittyCounter++; // Increase counter when a Kitty is spawned
+        Debug.Log("Kitty Spawned! Total Kitties: " + kittyCounter);
     }
 
     void Update()
     {
-        if (player == null || basket == null)
-        {
-            Debug.LogError("Player or Basket is not assigned in " + gameObject.name);
-            return;
-        }
+        if (player == null) return;
 
-        float distanceToPlayer = Vector3.Distance(player.position, basket.position); // Distance between player & basket
-        float angleToPlayer = Vector3.Angle(transform.forward, (player.position - transform.position).normalized);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        // Check if the player is near the basket AND facing the kitty
-        if (distanceToPlayer <= chaseRange && angleToPlayer < fieldOfView / 2)
+        if (distanceToPlayer <= chaseRange) // Chase if player is close
         {
             StartChase();
         }
-        else if (isChasing)
+        else if (isChasing) // Stop chase if player escapes
         {
             StopChase();
         }
 
-        // Keep patrolling if not chasing
-        if (!isChasing && !agent.pathPending && agent.remainingDistance < 0.5f)
+        if (!isChasing)
         {
-            MoveToNextPatrolPoint();
+            if (patrolPoints.Length > 0)
+            {
+                PatrolWithWaypoints();
+            }
+            else
+            {
+                WanderWithinRadius(); // If no patrol points, move randomly in a set radius
+            }
         }
     }
 
-    private void MoveToNextPatrolPoint()
+    private void PatrolWithWaypoints()
     {
-        if (patrolPoints.Length == 0) return; // No patrol points? Do nothing
+        if (!agent.pathPending && agent.remainingDistance < 0.5f)
+        {
+            int nextPoint = Random.Range(0, patrolPoints.Length); // Pick a random patrol point
+            agent.SetDestination(patrolPoints[nextPoint].position);
+        }
+    }
 
-        agent.speed = patrolSpeed; // Set patrol speed
-        agent.destination = patrolPoints[currentPatrolIndex].position; // Move to patrol point
-
-        currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length; // Loop patrol points
+    private void WanderWithinRadius()
+    {
+        wanderTimer -= Time.deltaTime;
+        if (wanderTimer <= 0)
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * wanderRadius;
+            randomDirection += transform.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(randomDirection, out hit, wanderRadius, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position); // Move to a random position within the radius
+            }
+            wanderTimer = wanderTime; // Reset the wander timer
+        }
     }
 
     private void StartChase()
     {
         isChasing = true;
         agent.speed = chaseSpeed; // Increase speed
-        agent.destination = player.position; // Follow the player
+        agent.SetDestination(player.position); // Follow player
     }
 
     private void StopChase()
     {
         isChasing = false;
-        MoveToNextPatrolPoint(); // Resume patrolling
+        agent.speed = patrolSpeed; // Resume normal speed
+    }
+
+    private void OnDestroy()
+    {
+        kittyCounter--; // Decrease counter when a Kitty is destroyed
+        Debug.Log("Kitty Removed! Total Kitties Left: " + kittyCounter);
+    }
+
+    public static int GetKittyCount()
+    {
+        return kittyCounter; // Returns the number of active Kitties
+    }
+
+    public static void IncreaseKittyCount(int amount)
+    {
+        kittyCounter += amount; // Increase by the number of spawned Kitties
     }
 }
