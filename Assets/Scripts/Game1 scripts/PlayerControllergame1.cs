@@ -1,14 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerControllergame1 : MonoBehaviour
 {
     private Rigidbody playerRb;
     private float speed = 500;
     private GameObject focalPoint;
-    private bool isBraking = false; // Track if braking is active -Hoor
-    public float brakeForce = 5f; // Strength of the braking force -Hoor
+    private bool isBraking = false; // Track if braking is active
+    public float brakeForce = 5f; // Strength of the braking force
 
     public bool hasPowerup;
     public GameObject powerupIndicator;
@@ -19,17 +18,33 @@ public class PlayerControllergame1 : MonoBehaviour
 
     private bool isFrozen = false; // Track if the player is frozen
 
+    [Header("Freeze Effect")]
+    public GameObject freezeEffect; // Visual effect when the player is frozen
+
+    [Header("Ice Breaker Effect")]
+    public GameObject iceBreakerEffect; // Visual effect when the player breaks free from freeze
+
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
+
+        // Disable freeze and ice breaker effects at start
+        if (freezeEffect != null)
+        {
+            freezeEffect.SetActive(false);
+        }
+        if (iceBreakerEffect != null)
+        {
+            iceBreakerEffect.SetActive(false);
+        }
     }
 
     void Update()
     {
         if (isFrozen) return; // Skip movement if frozen
 
-        // Activate brake when pressing 'E' -Hoor
+        // Activate brake when pressing 'E'
         if (Input.GetKey(KeyCode.E))
         {
             isBraking = true;
@@ -44,10 +59,10 @@ public class PlayerControllergame1 : MonoBehaviour
         Vector3 movementDirection = focalPoint.transform.forward * verticalInput;
         playerRb.AddForce(movementDirection.normalized * speed * Time.deltaTime, ForceMode.Force);
 
-        // Apply brake if active -Hoor
+        // Apply brake if active
         if (isBraking)
         {
-            playerRb.linearVelocity *= (1 - brakeForce * Time.deltaTime); // Gradually slow down movement -Hoor
+            playerRb.linearVelocity *= (1 - brakeForce * Time.deltaTime); // Gradually slow down movement
         }
 
         // Set powerup indicator position to beneath player
@@ -93,17 +108,55 @@ public class PlayerControllergame1 : MonoBehaviour
         }
     }
 
-    // Freeze the player's vertical input for 2 seconds
+    // Freeze the player
     public void FreezePlayer()
     {
-        StartCoroutine(DisableVerticalInputForSeconds(5f));
+        isFrozen = true;
+        playerRb.linearVelocity = Vector3.zero; // Stop movement
+
+        // Activate freeze effect
+        if (freezeEffect != null)
+        {
+            freezeEffect.SetActive(true);
+        }
+
+        // Start coroutine to unfreeze after 2 seconds
+        StartCoroutine(UnfreezePlayerAfterDelay(5f));
     }
 
-    // Coroutine to disable vertical input for a specified duration
-    private IEnumerator DisableVerticalInputForSeconds(float seconds)
+    // Unfreeze the player
+    public void UnfreezePlayer()
     {
-        isFrozen = true; // Disable vertical input
-        yield return new WaitForSeconds(seconds); // Wait for the specified duration
-        isFrozen = false; // Re-enable vertical input
+        isFrozen = false;
+
+        // Deactivate freeze effect
+        if (freezeEffect != null)
+        {
+            freezeEffect.SetActive(false);
+        }
+
+        // Activate ice breaker effect
+        if (iceBreakerEffect != null)
+        {
+            iceBreakerEffect.SetActive(true);
+            StartCoroutine(DeactivateIceBreakerEffect(4f)); // Deactivate after 1 second
+        }
+    }
+
+    // Coroutine to unfreeze the player after a delay
+    private IEnumerator UnfreezePlayerAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        UnfreezePlayer();
+    }
+
+    // Coroutine to deactivate the ice breaker effect after a delay
+    private IEnumerator DeactivateIceBreakerEffect(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (iceBreakerEffect != null)
+        {
+            iceBreakerEffect.SetActive(false);
+        }
     }
 }
