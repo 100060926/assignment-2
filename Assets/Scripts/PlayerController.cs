@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     {
         float forwardInput = Input.GetAxis("Vertical");
 
-        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed);
+        playerRb.AddForce(focalPoint.transform.forward * forwardInput * speed  * Time.deltaTime);
 
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.5f, 0);
     }
