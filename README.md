@@ -17,6 +17,8 @@ Shahad:
 
 We have created 4 branches-  Game 1, Game 2 and Game 3 - each commiting their changes within their specified branch, to avoid merging issues and could push the files and pull as intended. As we finish the assignment, everything is being commited to the main after merging to insure a successfull experience and no work has been erased.
 
+Major commits:
+  - As each member finishes their part of the game, they upload it to their assigned branch, this way after all members finish their part, we could download each branch, and merge the branches without creating any issues. Team members can track progress, test features, and merge seamlessly. Finally, pushing the combined, tested game to the main branch ensures stability and a smooth release.
 
 
 
