@@ -3,31 +3,49 @@ using UnityEngine;
 
 public class PowerupSpawner : MonoBehaviour
 {
-    public GameObject jumpPowerupPrefab; // Prefab for the jump powerup
-    public Vector3 spawnArea = new Vector3(10f, 0f, 10f); // Area within which to spawn the powerup
-    public float spawnInterval = 10f; // Time between spawns
+    public GameObject slowMotionPowerupPrefab;  // Prefab for Slow Motion Powerup
+    public GameObject jumpPowerupPrefab;        // Prefab for Jump Powerup
+    public Transform[] spawnCenters;            // Array of spawn points
+
+    public float spawnRadius = 5f;              // Radius around the spawn point where powerups can spawn
+    public float spawnHeight = 1.0f;            // Height at which powerups will spawn
+
+    private bool isPowerupActive = false;       // Track if a powerup is currently active
+    private GameObject currentPowerup;          // Track the current active powerup
 
     void Start()
     {
-        // Start spawning powerups
-        StartCoroutine(SpawnPowerups());
+        if (spawnCenters.Length == 0)
+        {
+            Debug.LogError("No spawn points assigned in PowerupSpawner!");
+        }
     }
 
-    private IEnumerator SpawnPowerups()
+    public void SpawnPowerup()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(spawnInterval);
+        if (isPowerupActive || spawnCenters.Length == 0) return; // Prevent spawning if a powerup is active or no spawn points
 
-            // Calculate a random position within the spawn area
-            Vector3 spawnPosition = new Vector3(
-                Random.Range(-spawnArea.x / 2, spawnArea.x / 2),
-                0.5f, // Slightly above the ground
-                Random.Range(-spawnArea.z / 2, spawnArea.z / 2)
-            );
+        // Select a random spawn center from the available spawn points
+        Transform chosenSpawnCenter = spawnCenters[Random.Range(0, spawnCenters.Length)];
 
-            // Spawn the powerup
-            Instantiate(jumpPowerupPrefab, spawnPosition, Quaternion.identity);
-        }
+        // Generate a random position within the spawnRadius around the chosen spawn point
+        Vector3 randomOffset = Random.insideUnitSphere * spawnRadius;
+        randomOffset.y = 0; // Keep it on the same plane
+
+        Vector3 spawnPosition = chosenSpawnCenter.position + randomOffset;
+        spawnPosition.y = spawnHeight; // Adjust height
+
+        // Randomly choose between Slow Motion and Jump Powerup
+        GameObject powerupToSpawn = Random.value < 0.5f ? slowMotionPowerupPrefab : jumpPowerupPrefab;
+
+        // Spawn the powerup and track it
+        currentPowerup = Instantiate(powerupToSpawn, spawnPosition, Quaternion.identity);
+        isPowerupActive = true;
+    }
+
+    public void PowerupCollected()
+    {
+        isPowerupActive = false;  // Allow new powerup to spawn in the next wave
+        currentPowerup = null;     // Clear reference to current powerup
     }
 }

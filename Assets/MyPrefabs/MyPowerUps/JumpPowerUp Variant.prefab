@@ -30,15 +30,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 438616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -36.7
+      value: -37.14688
       objectReference: {fileID: 0}
     - target: {fileID: 438616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -42.18
+      value: -43.143738
       objectReference: {fileID: 0}
     - target: {fileID: 438616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.974629
+      value: 0.91103894
       objectReference: {fileID: 0}
     - target: {fileID: 438616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       propertyPath: m_LocalRotation.w
@@ -77,10 +77,10 @@ PrefabInstance:
       addedObject: {fileID: 4144493515433497671}
     - targetCorrespondingSourceObject: {fileID: 138616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5919795875640121330}
+      addedObject: {fileID: 2184552374073690542}
     - targetCorrespondingSourceObject: {fileID: 138616, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2184552374073690542}
+      addedObject: {fileID: -1935712273563929085}
   m_SourcePrefab: {fileID: 100100000, guid: 9747013bfc80c7648bebc0e13034f691, type: 3}
 --- !u!1 &3575335666049830374 stripped
 GameObject:
@@ -114,22 +114,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &5919795875640121330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3575335666049830374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 999f83585afb06542b34687277d51d66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hopForce: 10
-  smashForce: 20
-  smashRadius: 5
-  shockwaveEffect: {fileID: 0}
 --- !u!135 &2184552374073690542
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -151,3 +135,17 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.041462544
   m_Center: {x: -0.00090096385, y: 0, z: 0}
+--- !u!114 &-1935712273563929085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3575335666049830374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c9086cb9667ca46826c5d1bf5a8b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSpeed: 1
+  hoverHeight: 0.2
