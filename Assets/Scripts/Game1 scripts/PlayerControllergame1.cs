@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class PlayerControllergame1 : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class PlayerControllergame1 : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody>();
         focalPoint = GameObject.Find("Focal Point");
-
+        powerupIndicator.SetActive(false);
         // Disable freeze and ice breaker effects at start
         if (freezeEffect != null)
         {
@@ -65,14 +65,13 @@ public class PlayerControllergame1 : MonoBehaviour
             playerRb.linearVelocity *= (1 - brakeForce * Time.deltaTime); // Gradually slow down movement
         }
 
-        // Set powerup indicator position to beneath player
-        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+        
     }
 
     // If Player collides with powerup, activate powerup
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Powerup"))
+        if (other.gameObject.CompareTag("JumpPowerup"))
         {
             Destroy(other.gameObject);
             hasPowerup = true;
@@ -121,7 +120,7 @@ public class PlayerControllergame1 : MonoBehaviour
         }
 
         // Start coroutine to unfreeze after 2 seconds
-        StartCoroutine(UnfreezePlayerAfterDelay(5f));
+        StartCoroutine(UnfreezePlayerAfterDelay(2f));
     }
 
     // Unfreeze the player
@@ -139,7 +138,7 @@ public class PlayerControllergame1 : MonoBehaviour
         if (iceBreakerEffect != null)
         {
             iceBreakerEffect.SetActive(true);
-            StartCoroutine(DeactivateIceBreakerEffect(4f)); // Deactivate after 1 second
+            StartCoroutine(DeactivateIceBreakerEffect(1f)); // Deactivate after 1 second
         }
     }
 

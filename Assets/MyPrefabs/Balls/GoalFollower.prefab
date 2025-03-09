@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoalFollower
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 1448360164578408125, guid: 77193e0ce111b084ba462f64dc8e4d25, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.3263206
@@ -249,5 +253,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
+  goalSpeed: 4.5
   playerGoal: {fileID: 0}
   enemyGoal: {fileID: 0}
