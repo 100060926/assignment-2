@@ -1,14 +1,22 @@
-# assignment-2
+The game featured 4 mini games. While all modes share the same core mechanics (Enemy Ai and wave spawns), their objectives, milstones, strategies, and overall experience vary.
 
-# We decided to make three extra minigames along the challange 4, but we made challange 4 a tutorial with extra features
+Hoor:
+  - Game designer (Places obstacles, enemies, and powerups)
+  - game 1 
+  - Combined the games and UI's
 
-# Hoor worked on game 1 and is responsible for working on the main menu UI. The branch that game 1 was pushed to is branch 1
+Abdulla:
+  - Programmer ( Works on performance optimization and bug fixing )
+  - Game 2 (Stored as Game 3)
+  - Game 0 ( the original challange 4)
 
-# Shahad worked on game 3 and the tutorial (previously called game2 but we changed so that the games order are more appropriate), the branch responsible for game3 is branch2
+Shahad:
+  - Project manager (development process and team coordination)
+  - Game 3 (Stored as Game 2)
+  - Report
 
-# Abdulla completed challange 4 and worked on game 2 (previously called game3), which were pushed to main and branch3 respectively
+We have created 4 branches-  Game 1, Game 2 and Game 3 - each commiting their changes within their specified branch, to avoid merging issues and could push the files and pull as intended. As we finish the assignment, everything is being commited to the main after merging to insure a successfull experience and no work has been erased.
 
-# We all had to commit changes first to the branches before merging it to main, we made sure our files were seperate so we don't face troubles while merging the branches together with main
 
 
 
