@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
+
 {
     public float walkSpeed = 5f;
     public float runSpeed = 10f;

@@ -12,6 +12,8 @@ public class EnemyX : MonoBehaviour
     void Start()
     {
         enemyRb = GetComponent<Rigidbody>();
+        playerGoal = GameObject.Find("Player Goal");
+        speed = 100;
     }
 
     // Update is called once per frame

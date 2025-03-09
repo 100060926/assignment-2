@@ -14,13 +14,17 @@ public class SpawnManagerX : MonoBehaviour
     public int enemyCount;
     public int waveCount = 1;
 
+    private EnemyX enemy;
+
 
     public GameObject player; 
 
     // Update is called once per frame
     void Update()
     {
-        enemyCount = GameObject.FindGameObjectsWithTag("Powerup").Length;
+        enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
+
+        enemy = enemyPrefab.GetComponent<EnemyX>();
 
         if (enemyCount == 0)
         {
@@ -30,14 +34,12 @@ public class SpawnManagerX : MonoBehaviour
     }
 
     // Generate random spawn position for powerups and enemy balls
-    Vector3 GenerateSpawnPosition()
+    Vector3 GenerateSpawnPosition ()
     {
-        float xOffset = Random.Range(-spawnRangeX, spawnRangeX); // Random X offset
-        float zOffset = Random.Range(-spawnZMax, -spawnZMin); // Random Z offset to keep them around the player
-
-        return player.transform.position + new Vector3(xOffset, 0, zOffset); // Spawn relative to player -Hoor
+        float xPos = Random.Range(-spawnRangeX, spawnRangeX);
+        float zPos = Random.Range(spawnZMin, spawnZMax);
+        return new Vector3(xPos, 0, zPos);
     }
-
 
 
     void SpawnEnemyWave(int enemiesToSpawn)
@@ -51,12 +53,13 @@ public class SpawnManagerX : MonoBehaviour
         }
 
         // Spawn number of enemy balls based on wave number
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < waveCount; i++)
         {
             Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
         }
 
         waveCount++;
+        enemy.speed += 100;
         ResetPlayerPosition(); // put player back at start
 
     }
@@ -64,7 +67,7 @@ public class SpawnManagerX : MonoBehaviour
     // Move player back to position in front of own goal
     void ResetPlayerPosition ()
     {
-        player.transform.position = new Vector3(-48, -40, 6);
+        player.transform.position = new Vector3(0, 1, -7);
         player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
