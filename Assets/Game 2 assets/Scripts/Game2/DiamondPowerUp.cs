@@ -1,26 +1,26 @@
 using UnityEngine;
 using System.Collections;
+
 //shahad
 public class DiamondPowerUp : MonoBehaviour
 {
     [Header("Power-Up Settings")]
     public float powerUpDuration = 5f; // Duration of the power-up effect
-    public float pushRadius = 10f; // Radius in which enemies are affected
-    public float powerupStrength = 50f; // Stronger push force for a visible effect
+    public float pushRadius = 15f; // Increased push radius for a bigger effect
+    public float powerupStrength = 150f; // Extremely strong push force
     public GameObject powerupIndicator; // UI indicator for power-up
-    public ParticleSystem powerupParticle; //Particle effect surrounding the player
+    public ParticleSystem powerupParticle; //  Particle effect surrounding the player
 
     private bool hasPowerup = false; // Tracks whether power-up is active
 
     void Start()
     {
-        //Ensure the Diamond starts as ACTIVE when the game begins
-        gameObject.SetActive(true);
+        gameObject.SetActive(true); //  Ensure the Diamond starts active
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) // Check if the player picks up the Diamond
+        if (other.CompareTag("Player")) //  Ensure only the Player can collect the Diamond
         {
             Debug.Log("Diamond Collected! Power-up activated.");
 
@@ -29,26 +29,26 @@ public class DiamondPowerUp : MonoBehaviour
 
             if (powerupParticle != null)
             {
-                powerupParticle.Play(); //Start particle effect on player
+                powerupParticle.Play(); // Start particle effect on player
             }
 
-            gameObject.SetActive(false); //Make the Diamond disappear
+            gameObject.SetActive(false); //  Make the Diamond disappear
+
+            PushNearbyEnemies(other.transform.position); //  Immediately push ONLY enemies away
 
             StartCoroutine(PowerupCooldown()); // Start power-up timer
-
-            PushNearbyEnemies(other.transform.position); //Immediately push all nearby enemies away
         }
     }
 
     IEnumerator PowerupCooldown()
     {
-        yield return new WaitForSeconds(powerUpDuration); // Wait 5 seconds
+        yield return new WaitForSeconds(powerUpDuration); //  Wait for power-up duration
         hasPowerup = false; // Disable power-up
         powerupIndicator.SetActive(false); // Hide UI effect
 
         if (powerupParticle != null)
         {
-            powerupParticle.Stop(); //Stop particle effect
+            powerupParticle.Stop(); //  Stop particle effect
         }
 
         Debug.Log("Power-up expired!");
@@ -60,20 +60,20 @@ public class DiamondPowerUp : MonoBehaviour
 
         foreach (Collider collider in hitColliders)
         {
-            if (collider.CompareTag("Enemy")) // Check if it's a Kitty
+            //  Check ONLY if the object is tagged "Enemy"
+            if (collider.CompareTag("Enemy"))
             {
                 Rigidbody enemyRigidbody = collider.GetComponent<Rigidbody>();
 
                 if (enemyRigidbody != null)
                 {
-                    //Ensure Rigidbody is NOT Kinematic
-                    enemyRigidbody.isKinematic = false;
+                    enemyRigidbody.isKinematic = false; // Ensure Rigidbody is NOT Kinematic
 
-                    // Push the enemy directly away from the player with strong force
+                    // Push the enemy directly away from the player with STRONG force
                     Vector3 pushDirection = (collider.transform.position - playerPosition).normalized;
-                    enemyRigidbody.AddForce(pushDirection * powerupStrength, ForceMode.VelocityChange);
+                    enemyRigidbody.AddForce(pushDirection * powerupStrength, ForceMode.Impulse);
 
-                    Debug.Log("Kitty pushed FAR AWAY due to power-up!");
+                    Debug.Log("Enemy pushed FAR AWAY due to power-up!");
                 }
             }
         }
