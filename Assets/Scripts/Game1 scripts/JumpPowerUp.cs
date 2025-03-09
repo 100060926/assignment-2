@@ -10,6 +10,8 @@ public class JumpPowerUp : MonoBehaviour
 
     private bool hasJumpPowerup = false; // Track if the player has the jump powerup
     private Rigidbody playerRb;
+    [Header("Effects")]
+    public GameObject stunEffectPrefab; // Prefab for the stun effect
 
     void Start()
     {
@@ -78,7 +80,18 @@ public class JumpPowerUp : MonoBehaviour
             enemyRb.linearVelocity = Vector3.zero;
             enemyRb.angularVelocity = Vector3.zero;
 
-            // Disable enemy movement script (if applicable)
+            // Spawn stun effect above the enemy
+            if (stunEffectPrefab != null)
+            {
+                GameObject stunEffect = Instantiate(stunEffectPrefab, enemy.transform.position + Vector3.up * 2, Quaternion.identity);
+
+                // Attach a script to keep it above the enemy without rotation
+                stunEffect.AddComponent<StunEffectFollower>().Initialize(enemy.transform);
+
+                Destroy(stunEffect, duration); // Remove effect after stun duration
+            }
+
+            // Disable enemy movement script if applicable
             MonoBehaviour enemyScript = enemy.GetComponent<MonoBehaviour>();
             if (enemyScript != null)
             {
@@ -96,4 +109,29 @@ public class JumpPowerUp : MonoBehaviour
             Debug.Log("Enemy is no longer stunned!");
         }
     }
+
+
 }
+
+
+public class StunEffectFollower : MonoBehaviour
+{
+    private Transform enemyTransform;
+    private Vector3 offset = new Vector3(0, 2, 0); // Keep it above the enemy
+
+    public void Initialize(Transform target)
+    {
+        enemyTransform = target;
+    }
+
+    void Update()
+    {
+        if (enemyTransform != null)
+        {
+            // Follow enemy position but keep rotation horizontal
+            transform.position = enemyTransform.position + offset;
+            transform.rotation = Quaternion.Euler(90, 0, 0); // Keep effect flat on top
+        }
+    }
+}
+
