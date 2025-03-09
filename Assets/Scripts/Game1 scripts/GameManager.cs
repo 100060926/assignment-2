@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,23 +10,47 @@ public class GameManager : MonoBehaviour
 
     public int gameOverThreshold = 5; // Number of balls needed to end the game
 
-    public Text playerScoreText; // UI Text for Player Score
-    public Text enemyScoreText;  // UI Text for Enemy Score
-    public Text gameOverText;    // UI Text for Game Over message
+    // UI Elements
+    public Text playerScoreText;       // UI Text for Player Score
+    public Text enemyScoreText;        // UI Text for Enemy Score
+
+    public GameObject gameUIPanel;     // Game UI (Score, Turbo, etc.)
+    public GameObject gameOverPanel;   // Game Over UI
+    public GameObject victoryPanel;    // Victory UI
+
+    public Text gameOverScoreText;     // Final score display on Game Over screen
+    public Text victoryScoreText;      // Final score display on Victory screen
+
+    public Button retryButton;         // Retry button (Game Over)
+    public Button menuButton;          // Menu button (Game Over)
+    public Button victoryMenuButton;   // Menu button (Victory)
+    public Button victoryRetryButton;  // Retry button (Victory)
 
     public SpawnManagerGame1 spawnManager; // Reference to the Spawn Manager
 
     private bool gameOver = false; // Tracks if the game is over
+    private bool gameStarted = false; // Ensures the game starts properly
 
     void Start()
     {
+        Debug.Log("Game Initialized. Waiting for Start...");
+
+        // Hide all UI at start
+        if (gameUIPanel != null) gameUIPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+    }
+
+    public void OnGameStart()
+    {
+        if (gameStarted) return; // Prevent multiple calls
+        gameStarted = true;
+
         Debug.Log("Game Started! Scores initialized.");
         UpdateScoreUI();
 
-        if (gameOverText != null)
-            gameOverText.gameObject.SetActive(false); // Hide Game Over message at start
-        else
-            Debug.LogError("GameOverText UI reference is missing in the Inspector!");
+        // Activate the game UI
+        if (gameUIPanel != null) gameUIPanel.SetActive(true);
     }
 
     public void AddScore(int points, string scorer)
@@ -54,15 +79,8 @@ public class GameManager : MonoBehaviour
 
     void UpdateScoreUI()
     {
-        if (playerScoreText != null && enemyScoreText != null)
-        {
-            playerScoreText.text = "Player Score: " + playerScore;
-            enemyScoreText.text = "Enemy Score: " + enemyScore;
-        }
-        else
-        {
-            Debug.LogError("UI Text references are missing in the GameManager!");
-        }
+        if (playerScoreText != null) playerScoreText.text = " " + playerScore;
+        if (enemyScoreText != null) enemyScoreText.text = " " + enemyScore;
     }
 
     public void CheckForGameEnd()
@@ -71,7 +89,7 @@ public class GameManager : MonoBehaviour
 
         if (playerGoalCount >= gameOverThreshold)
         {
-            EndGame(false); // Player loses if 5 balls enter their goal
+            EndGame(false); // Player loses if too many balls enter their goal
         }
         else if (spawnManager != null && spawnManager.AreAllEnemiesDestroyed())
         {
@@ -83,18 +101,9 @@ public class GameManager : MonoBehaviour
     {
         if (gameOver) return; // Prevent multiple calls
         gameOver = true;
+        Time.timeScale = 0f; // Pause the game
 
         Debug.Log("Game Over! " + (playerWon ? "Player Wins!" : "Enemy Wins!"));
-
-        if (gameOverText != null)
-        {
-            gameOverText.gameObject.SetActive(true);
-            gameOverText.text = playerWon ? "Victory! You Survived All Waves!" : "Game Over! Enemy Wins!";
-        }
-        else
-        {
-            Debug.LogError("Game Over Text UI reference is missing!");
-        }
 
         // Stop enemy spawning
         if (spawnManager != null)
@@ -110,7 +119,25 @@ public class GameManager : MonoBehaviour
         // Stop all enemy movement
         DisableAllEnemies();
 
-        Debug.Log(playerWon ? "Player Wins! All waves survived." : "Game Over! The enemy has won.");
+        // Display final score and show the correct UI panel
+        if (playerWon)
+        {
+            if (victoryPanel != null)
+            {
+                victoryPanel.SetActive(true);
+                if (victoryScoreText != null)
+                    victoryScoreText.text = "" + playerScore;
+            }
+        }
+        else
+        {
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.SetActive(true);
+                if (gameOverScoreText != null)
+                    gameOverScoreText.text = "" + playerScore;
+            }
+        }
     }
 
     void DisableAllEnemies()
@@ -120,25 +147,10 @@ public class GameManager : MonoBehaviour
         ShieldedEnemy[] shieldedEnemies = FindObjectsOfType<ShieldedEnemy>();
         SpeedBoosterEnemy[] speedBoosters = FindObjectsOfType<SpeedBoosterEnemy>();
 
-        foreach (EnemyPlayerFollower enemy in playerFollowers)
-        {
-            enemy.enabled = false;
-        }
-
-        foreach (EnemyGoalFollower enemy in goalSeekers)
-        {
-            enemy.enabled = false;
-        }
-
-        foreach (ShieldedEnemy enemy in shieldedEnemies)
-        {
-            enemy.enabled = false;
-        }
-
-        foreach (SpeedBoosterEnemy enemy in speedBoosters)
-        {
-            enemy.enabled = false;
-        }
+        foreach (EnemyPlayerFollower enemy in playerFollowers) enemy.enabled = false;
+        foreach (EnemyGoalFollower enemy in goalSeekers) enemy.enabled = false;
+        foreach (ShieldedEnemy enemy in shieldedEnemies) enemy.enabled = false;
+        foreach (SpeedBoosterEnemy enemy in speedBoosters) enemy.enabled = false;
 
         Debug.Log("Disabled all active enemies.");
     }
@@ -146,5 +158,33 @@ public class GameManager : MonoBehaviour
     public bool PlayerHasLost()
     {
         return playerGoalCount >= gameOverThreshold;
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f; // Resume game
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f; // Resume game
+        SceneManager.LoadScene("MainMenu"); 
+    }
+
+    void OnEnable()
+    {
+        if (retryButton != null) retryButton.onClick.AddListener(RestartGame);
+        if (menuButton != null) menuButton.onClick.AddListener(GoToMainMenu);
+        if (victoryRetryButton != null) victoryRetryButton.onClick.AddListener(RestartGame);
+        if (victoryMenuButton != null) victoryMenuButton.onClick.AddListener(GoToMainMenu);
+    }
+
+    void OnDisable()
+    {
+        if (retryButton != null) retryButton.onClick.RemoveListener(RestartGame);
+        if (menuButton != null) menuButton.onClick.RemoveListener(GoToMainMenu);
+        if (victoryRetryButton != null) victoryRetryButton.onClick.RemoveListener(RestartGame);
+        if (victoryMenuButton != null) victoryMenuButton.onClick.RemoveListener(GoToMainMenu);
     }
 }

@@ -6,7 +6,7 @@ public class SlowMotionPowerup : MonoBehaviour
 {
     private float slowEffectDuration = 5f; // How long the slow effect lasts
     private float enemySlowFactor = 0.15f; // How much enemies slow down
-    public Text slowMotionTimerText; // UI Text to display effect duration
+    public Slider slowMotionSlider; // UI Slider to display effect duration
     public GameObject slowEffectIndicator; // Visual indicator for the player
 
     private bool isSlowEffectActive = false; // Prevent multiple activations
@@ -37,10 +37,12 @@ public class SlowMotionPowerup : MonoBehaviour
             slowEffectIndicator.SetActive(true);
         }
 
-        // Show timer UI
-        if (slowMotionTimerText != null)
+        // Show and initialize slider UI
+        if (slowMotionSlider != null)
         {
-            slowMotionTimerText.gameObject.SetActive(true);
+            slowMotionSlider.gameObject.SetActive(true);
+            slowMotionSlider.maxValue = slowEffectDuration;
+            slowMotionSlider.value = slowEffectDuration; // Start full
         }
 
         float timeLeft = slowEffectDuration;
@@ -59,9 +61,9 @@ public class SlowMotionPowerup : MonoBehaviour
         // Countdown UI
         while (timeLeft > 0)
         {
-            if (slowMotionTimerText != null)
+            if (slowMotionSlider != null)
             {
-                slowMotionTimerText.text = "Slow Effect: " + timeLeft.ToString("F1") + "s";
+                slowMotionSlider.value = timeLeft; // Update slider value
             }
             timeLeft -= Time.deltaTime;
             yield return null;
@@ -76,7 +78,7 @@ public class SlowMotionPowerup : MonoBehaviour
         Debug.Log("Slow Motion Effect Ended!");
 
         // Hide UI and reset effect flag
-        if (slowMotionTimerText != null) slowMotionTimerText.gameObject.SetActive(false);
+        if (slowMotionSlider != null) slowMotionSlider.gameObject.SetActive(false);
 
         // Hide effect indicator
         if (slowEffectIndicator != null)
