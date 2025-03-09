@@ -21,8 +21,8 @@ public class SpawnManagerGame1 : MonoBehaviour
 
     private bool stopSpawning = false;        // Flag to control spawning
     private int currentWave = 0;              // Tracks the current wave
-    private int maxWaves = 6;                 // Total number of waves (updated to 7)
-    private int maxEnemiesOnField = 6;        // Max number of enemies on the field (updated to 7)
+    private int maxWaves = 6;                 // Total number of waves
+    private int maxEnemiesOnField = 6;        // Max number of enemies on the field
 
     private Coroutine waveCoroutine;          // Reference to the wave coroutine
 
@@ -48,41 +48,38 @@ public class SpawnManagerGame1 : MonoBehaviour
 
             List<int> usedSpawnPoints = new List<int>();
 
+            // Spawn a powerup at the beginning of each wave (if no powerup is active)
+            if (!isPowerupActive)
+            {
+                SpawnPowerup();
+            }
+
+            // Spawn enemies based on the current wave
             switch (currentWave)
             {
                 case 1: // Only Enemy Followers (Increase Speed)
-                    SpawnPowerup();
                     SpawnEnemy(enemyFollowPrefab, 3, usedSpawnPoints, 4.0f);
                     break;
 
                 case 2: // Only Goal Followers (Increase Speed)
-                    SpawnPowerup();
                     SpawnEnemy(enemyGoalPrefab, 3, usedSpawnPoints, 4.0f);
                     break;
 
                 case 3: // Only Shielded Enemies (Increase Speed when Going to Goal)
-                    SpawnPowerup();
                     SpawnEnemy(shieldedEnemyPrefab, 3, usedSpawnPoints, 3.5f, 4.5f);
                     break;
 
                 case 4: // Only Speed Boosters
-                    SpawnPowerup();
                     SpawnEnemy(speedBoosterPrefab, 3, usedSpawnPoints, 5.0f);
                     break;
 
                 case 5: // Wave 5: 4 enemies (mix of all types)
-                    SpawnPowerup();
                     SpawnMixedEnemies(4, usedSpawnPoints);
                     break;
 
                 case 6: // Wave 6: 5 enemies (mix of all types)
-                    SpawnPowerup();
                     SpawnMixedEnemies(5, usedSpawnPoints);
                     break;
-
-                //case 7: // Wave 7: 7 enemies (mix of all types)
-                    //SpawnMixedEnemies(7, usedSpawnPoints);
-                    //break;
             }
 
             // Wait until all enemies are destroyed before moving to the next wave
@@ -97,6 +94,41 @@ public class SpawnManagerGame1 : MonoBehaviour
                 yield break; // Stop coroutine
             }
         }
+    }
+
+    void SpawnPowerup()
+    {
+        if (isPowerupActive || powerupSpawnCenters.Length == 0)
+        {
+            Debug.Log("Powerup spawn skipped: isPowerupActive = " + isPowerupActive);
+            return; // Prevent multiple active powerups
+        }
+
+        Debug.Log("Spawning new powerup...");
+
+        // Choose a random spawn point
+        Transform chosenSpawnCenter = powerupSpawnCenters[Random.Range(0, powerupSpawnCenters.Length)];
+
+        // Generate a random X and Z position within the defined radius
+        float randomX = chosenSpawnCenter.position.x + Random.Range(-powerupSpawnRadius, powerupSpawnRadius);
+        float fixedY = -43.8f; // Keep Y fixed 
+        float randomZ = chosenSpawnCenter.position.z + Random.Range(-powerupSpawnRadius, powerupSpawnRadius);
+
+        Vector3 spawnPosition = new Vector3(randomX, fixedY, randomZ);
+
+        // Randomly select a powerup type (50% chance each)
+        GameObject powerupToSpawn = Random.value < 0.5f ? slowMotionPowerupPrefab : jumpPowerupPrefab;
+
+        // Instantiate the powerup and track it
+        currentPowerup = Instantiate(powerupToSpawn, spawnPosition, Quaternion.identity);
+        isPowerupActive = true;
+    }
+
+    public void PowerupCollected()
+    {
+        Debug.Log("Powerup Collected! Resetting flag.");
+        isPowerupActive = false;  // Allow new powerup to spawn in the next wave
+        currentPowerup = null;     // Clear reference to current powerup
     }
 
     void SpawnMixedEnemies(int count, List<int> usedSpawnPoints)
@@ -213,32 +245,4 @@ public class SpawnManagerGame1 : MonoBehaviour
             gameManager.EndGame(true);
         }
     }
-    void SpawnPowerup()
-    {
-        if (isPowerupActive || powerupSpawnCenters.Length == 0) return; // Prevent multiple active powerups
-
-        // Choose a random spawn point
-        Transform chosenSpawnCenter = powerupSpawnCenters[Random.Range(0, powerupSpawnCenters.Length)];
-
-        // Generate a random X and Z position within the defined radius
-        float randomX = chosenSpawnCenter.position.x + Random.Range(-powerupSpawnRadius, powerupSpawnRadius);
-        float fixedY = -43.8f; // Keep Y fixed 
-        float randomZ = chosenSpawnCenter.position.z + Random.Range(-powerupSpawnRadius, powerupSpawnRadius);
-
-        Vector3 spawnPosition = new Vector3(randomX, fixedY, randomZ);
-
-        // Randomly select a powerup type (50% chance each)
-        GameObject powerupToSpawn = Random.value < 0.5f ? slowMotionPowerupPrefab : jumpPowerupPrefab;
-
-        // Instantiate the powerup and track it
-        currentPowerup = Instantiate(powerupToSpawn, spawnPosition, Quaternion.identity);
-        isPowerupActive = true;
-    }
-
-    public void PowerupCollected()
-    {
-        isPowerupActive = false;  // Allow new powerup to spawn in the next wave
-        currentPowerup = null;     // Clear reference to current powerup
-    }
-
 }

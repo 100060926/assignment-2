@@ -16,6 +16,13 @@ public class SlowMotionPowerup : MonoBehaviour
         if (!isSlowEffectActive)
         {
             StartCoroutine(ApplySlowMotionEffect());
+
+            // Notify the spawn manager that the powerup was collected
+            SpawnManagerGame1 spawnManager = FindObjectOfType<SpawnManagerGame1>();
+            if (spawnManager != null)
+            {
+                spawnManager.PowerupCollected();
+            }
         }
     }
 

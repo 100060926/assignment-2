@@ -28,11 +28,18 @@ public class JumpPowerUp : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("JumpPowerup"))
+        if (other.CompareTag("JumpPowerup") && !hasJumpPowerup)
         {
             hasJumpPowerup = true;
             Debug.Log("Jump Powerup Collected! Press Space to hop and smash.");
             other.gameObject.SetActive(false);
+
+            // Notify the spawn manager that the powerup was collected
+            SpawnManagerGame1 spawnManager = FindObjectOfType<SpawnManagerGame1>();
+            if (spawnManager != null)
+            {
+                spawnManager.PowerupCollected();
+            }
         }
     }
 
@@ -109,11 +116,7 @@ public class JumpPowerUp : MonoBehaviour
             Debug.Log("Enemy is no longer stunned!");
         }
     }
-
-
 }
-
-
 public class StunEffectFollower : MonoBehaviour
 {
     private Transform enemyTransform;
