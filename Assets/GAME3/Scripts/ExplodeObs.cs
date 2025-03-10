@@ -7,7 +7,7 @@ public class ExplodeObs : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private GameObject player;
     private Rigidbody playerRB;
-    private PlayerControllerX pc;
+    private PlayerControllerA pc;
     public ParticleSystem explosion;
     private float respawnWaitTime = 0.25f;
     SpawnManagerXX spawnManager;
@@ -15,7 +15,7 @@ public class ExplodeObs : MonoBehaviour
     {
         player = GameObject.Find("Player");
         playerRB = player.GetComponent<Rigidbody>();
-        pc = player.GetComponent<PlayerControllerX>();
+        pc = player.GetComponent<PlayerControllerA>();
         spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManagerXX>();
     }
 

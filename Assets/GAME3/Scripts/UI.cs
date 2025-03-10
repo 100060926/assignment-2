@@ -7,7 +7,7 @@ public class UI : MonoBehaviour
 {
     SpawnManagerXX spawnManager;
     timer timer;  
-    PlayerControllerX pc;
+    PlayerControllerA pc;
     public TMP_Text bestTime;
     public GameObject mainMenuButton;
     public GameObject restartButton;
@@ -18,7 +18,7 @@ public class UI : MonoBehaviour
     {
         timer = GetComponent<timer>();
         spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManagerXX>();
-        pc = GameObject.Find("Player").GetComponent<PlayerControllerX>();
+        pc = GameObject.Find("Player").GetComponent<PlayerControllerA>();
         bestTime.gameObject.SetActive(false);
         mainMenuButton.SetActive(false);
         restartButton.SetActive(false);

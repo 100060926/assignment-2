@@ -5,7 +5,7 @@ using Vector3 = UnityEngine.Vector3;
 public class Logs : MonoBehaviour
 {
     private Rigidbody rb;
-    private PlayerControllerX pc;
+    private PlayerControllerA pc;
     private Vector3 direction = new Vector3(-1,0,0);
     private float force = 2.0f;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -14,7 +14,7 @@ public class Logs : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.AddForce(direction * force, ForceMode.Impulse);
         rb.constraints = RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationX;
-        pc = GameObject.Find("Player").GetComponent<PlayerControllerX>();
+        pc = GameObject.Find("Player").GetComponent<PlayerControllerA>();
     }
 
     // Update is called once per frame
