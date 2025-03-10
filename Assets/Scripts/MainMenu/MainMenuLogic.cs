@@ -42,16 +42,16 @@ public class MainMenuLogic : MonoBehaviour
         playButton.onClick.AddListener(ShowGameSelection);
 
         // Game Selection buttons open respective pop-ups
-        scene1Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup1, "Game0"));
+        scene1Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup1, "Game3_2"));
         scene2Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup2, "Game1"));
-        scene3Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup3, "PlayGround"));
-        scene4Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup4, "Game3finall")); // New scene
+        scene3Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup3, "Game3finall"));
+        scene4Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup4, "PlayGround")); // New scene
 
         // Confirmation buttons for each game
-        confirmButton1.onClick.AddListener(() => LoadGameScene(confirmationPopup1, "Game0"));
+        confirmButton1.onClick.AddListener(() => LoadGameScene(confirmationPopup1, "Game3_2"));
         confirmButton2.onClick.AddListener(() => LoadGameScene(confirmationPopup2, "Game1"));
-        confirmButton3.onClick.AddListener(() => LoadGameScene(confirmationPopup3, "PlayGround"));
-        confirmButton4.onClick.AddListener(() => LoadGameScene(confirmationPopup4, "Game3finall")); // Load new scene
+        confirmButton3.onClick.AddListener(() => LoadGameScene(confirmationPopup3, "Game3finall"));
+        confirmButton4.onClick.AddListener(() => LoadGameScene(confirmationPopup4, "PlayGround")); // Load new scene
 
         // Cancel buttons to close the respective pop-ups
         cancelButton1.onClick.AddListener(() => ClosePopup(confirmationPopup1));
