@@ -14,29 +14,37 @@ public class PlayerControllerX : MonoBehaviour
     public GameObject powerupIndicator;
     public int powerUpDuration = 5;
     public int boostDuration = 1;
-    Vector3 origin = new Vector3(2.5f,3,-22.5f);
-    public Vector3 checkPoint;
-    Vector3 finalChallange = new Vector3(33,14,83);
-    private SpawnManagerXX spawnManager;
 
+    private float normalStrength = 10; // how hard to hit enemy without powerup
+    private float powerupStrength = 25; // how hard to hit enemy with powerup
+    public ParticleSystem nitro;
+    private bool isBoosting = false;
     
     void Start()
-{
-    playerRb = GetComponent<Rigidbody>();
-    focalPoint = GameObject.Find("Focal Point");
-    checkPoint = origin;
-    spawnManager = GameObject.Find("Game Manager").GetComponent<SpawnManagerXX>();
-    powerupIndicator.SetActive(false);
-}
-
+    {
+        playerRb = GetComponent<Rigidbody>();
+        focalPoint = GameObject.Find("Focal Point");
+    }
 
     void Update()
     {
+        // Add force to player in direction of the focal point (and camera)
         float verticalInput = Input.GetAxis("Vertical");
         playerRb.AddForce(focalPoint.transform.forward * verticalInput * speed * Time.deltaTime); 
-        // Add force to player in direction of the focal point (and camera)
-            // Set powerup indicator position to beneath player
-            powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+
+        if (Input.GetKey(KeyCode.Space) && !isBoosting) {
+            isBoosting = true;
+            sprint();
+        }
+
+        // Set powerup indicator position to beneath player
+        powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+
+    }
+    private void sprint() {
+        playerRb.AddForce(focalPoint.transform.forward * speed* 5 * Time.deltaTime, ForceMode.Impulse);
+        nitro.Play();
+        StartCoroutine(BoostCoolDown());
     }
     // If Player collides with powerup, activate powerup
     private void OnTriggerEnter(Collider other)
@@ -48,14 +56,6 @@ public class PlayerControllerX : MonoBehaviour
             powerupIndicator.SetActive(true);
             StartCoroutine(PowerupCooldown());
         }
-        if (other.gameObject.CompareTag("Ocean"))
-        {
-            ResetPlayerPosition();
-        }
-        if (other.gameObject.CompareTag("piston")) 
-        {
-            playerRb.position = finalChallange;
-        }
     }
 
     // Coroutine to count down powerup duration
@@ -66,26 +66,33 @@ public class PlayerControllerX : MonoBehaviour
         powerupIndicator.SetActive(false);
     }
 
-    // If Player collides with enemy
-    private void OnCollisionEnter(Collision other)
-{
-    if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Ocean"))
-    {
-        
-    }
-}
-    public void ResetPlayerPosition ()
-    {
-        transform.position = checkPoint;
-        GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+    IEnumerator BoostCoolDown() {
+        yield return new WaitForSeconds(boostDuration);
+        isBoosting = false;
+        nitro.Stop();
     }
 
-    public void setSpawn(Vector3 a) {
-        checkPoint = a;
+    // If Player collides with enemy
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            Rigidbody enemyRigidbody = other.gameObject.GetComponent<Rigidbody>();
+            Vector3 awayFromPlayer =  other.gameObject.transform.position - transform.position; 
+           
+            if (hasPowerup) // if have powerup hit enemy with powerup force
+            {
+                enemyRigidbody.AddForce(awayFromPlayer * powerupStrength, ForceMode.Impulse);
+            }
+            else // if no powerup, hit enemy with normal strength 
+            {
+                enemyRigidbody.AddForce(awayFromPlayer * normalStrength, ForceMode.Impulse);
+            }
+
+
+        }
     }
-    public void setSpawnOrigin() {
-        checkPoint = origin;
-    }
+
+
 
 }
