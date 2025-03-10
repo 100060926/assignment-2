@@ -6,6 +6,11 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseMenuUI; // Reference to the Pause Menu UI Panel
     private bool isPaused = false; // Track if the game is paused
 
+    void Start()
+    {
+        pauseMenuUI.SetActive(false); // Ensure pause menu starts hidden
+    }
+
     void Update()
     {
         // Toggle pause when the player presses the Escape key
@@ -15,6 +20,12 @@ public class PauseMenu : MonoBehaviour
                 ResumeGame();
             else
                 PauseGame();
+        }
+
+        // Quit to Main Menu when "Q" is pressed (only if paused)
+        if (isPaused && Input.GetKeyDown(KeyCode.Q))
+        {
+            GoToMainMenu();
         }
     }
 
