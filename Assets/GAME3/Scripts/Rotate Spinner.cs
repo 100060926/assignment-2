@@ -4,13 +4,13 @@ using UnityEngine;
 public class RotateSpinner : MonoBehaviour
 {
     private float rotationSpeed  = 100.0f;
-    private PlayerControllerX pc;
+    private PlayerControllerA pc;
     private GameObject player;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         player = GameObject.Find("Player");
-        pc = player.gameObject.GetComponent<PlayerControllerX>();
+        pc = player.gameObject.GetComponent<PlayerControllerA>();
     }
 
     // Update is called once per frame

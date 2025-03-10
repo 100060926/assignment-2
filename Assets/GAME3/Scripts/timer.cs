@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class timer : MonoBehaviour
 {
-    PlayerControllerX pc;
+    PlayerControllerA pc;
     GameObject player;
     private int timeElapsed = 0;
     bool timerStarted;
@@ -19,7 +19,7 @@ public class timer : MonoBehaviour
     {
         timerStarted = true;
         player = GameObject.Find("Player");
-        pc = player.GetComponent<PlayerControllerX>();
+        pc = player.GetComponent<PlayerControllerA>();
         spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManagerXX>();
         timeStart = (int) Time.timeSinceLevelLoad;
         ui = GameObject.Find("Game Manager").GetComponent<UI>();

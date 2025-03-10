@@ -6,7 +6,7 @@ public class EnemyX : MonoBehaviour
 {
     public float speed;
     private Rigidbody enemyRb;
-    private PlayerControllerX pc;
+    private PlayerControllerA pc;
     private GameObject player;
     private float factor = 10;
     SpawnManagerXX spawnManager;
@@ -16,7 +16,7 @@ public class EnemyX : MonoBehaviour
     {
         enemyRb = GetComponent<Rigidbody>();
         player = GameObject.Find("Player");
-        pc = player.GetComponent<PlayerControllerX>();
+        pc = player.GetComponent<PlayerControllerA>();
         spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManagerXX>();
         speed = 200;
     }

@@ -4,7 +4,7 @@ using System.Data.Common;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class PlayerControllerX : MonoBehaviour
+public class PlayerControllerA : MonoBehaviour
 {
     private Rigidbody playerRb;
     private float speed = 500;
