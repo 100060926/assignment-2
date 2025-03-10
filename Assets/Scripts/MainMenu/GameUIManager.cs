@@ -1,54 +1,52 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class GameUIManager : MonoBehaviour
 {
-    public GameObject gameUI;          // UI Panel for the game
-    public GameObject countdownPanel;  // Countdown UI Panel
-    public Text countdownText;         // Countdown text inside the panel
-    public GameObject gameElements;    // Parent object for all game mechanics
+    public GameObject gameUI;        // UI Panel for the game
+    public GameObject gameElements;  // Parent object for all game mechanics
 
-    private bool countdownStarted = false; // Prevents double countdown execution
+    public Camera introCamera;       // Camera shown before the game starts
+    public Camera gameCamera;        // Main game camera
+
+    public float introDuration = 2f; // Duration to show intro camera before switching
+
+    private bool gameStarted = false; // Prevents multiple starts
 
     void Start()
     {
-        if (!countdownStarted) // Ensure countdown runs only once
-        {
-            countdownStarted = true;
-            Debug.Log("Game Scene Loaded. Starting Countdown...");
+        // Ensure everything is disabled at the start
+        gameUI.SetActive(false);
+        gameElements.SetActive(false);
+        if (gameCamera != null) gameCamera.gameObject.SetActive(false);
+        if (introCamera != null) introCamera.gameObject.SetActive(true);
 
-            // Ensure UI is active
-            gameUI.SetActive(true);
-            countdownPanel.SetActive(true);
-            gameElements.SetActive(false); // Disable game mechanics at start
-
-            // Pause the game while countdown runs
-            Time.timeScale = 0f;
-
-            // Start countdown
-            StartCoroutine(StartCountdown());
-        }
+        // Start coroutine to wait for the menu to close before starting the game
+        StartCoroutine(WaitForMenuToClose());
     }
 
-    IEnumerator StartCountdown()
+    IEnumerator WaitForMenuToClose()
     {
-        for (int i = 3; i > 0; i--)
+        // Wait until the Main Menu is no longer loaded
+        while (SceneManager.GetSceneByName("MainMenu").isLoaded)
         {
-            countdownText.text = i.ToString();
-            yield return new WaitForSecondsRealtime(1f); // Use Unscaled time since game is paused
+            yield return null; // Wait until the next frame to check again
         }
 
-        countdownText.text = "START!";
-        yield return new WaitForSecondsRealtime(1f);
+        Debug.Log("Main Menu Closed. Playing Intro Camera...");
 
-        // Hide countdown panel and start the game
-        countdownPanel.SetActive(false);
+        // Keep the intro camera active for a few seconds
+        yield return new WaitForSeconds(introDuration);
+
+        // Switch to game camera
+        if (introCamera != null) introCamera.gameObject.SetActive(false);
+        if (gameCamera != null) gameCamera.gameObject.SetActive(true);
+
+        // Activate game elements and UI
+        gameUI.SetActive(true);
         gameElements.SetActive(true);
 
-        Debug.Log("Countdown Over. Game Starting!");
-
-        // Resume game
-        Time.timeScale = 1f;
+        Debug.Log("Game Started!");
     }
 }

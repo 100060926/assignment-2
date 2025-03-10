@@ -114,13 +114,13 @@ public class EnemyAI : MonoBehaviour
     public static void IncreaseKittyCount(int amount)
     {
         kittyCounter = Mathf.Max(0, kittyCounter + amount); // Prevent negative count
-        if (kittyCounterUI != null) kittyCounterUI.text = "Kitties: " + kittyCounter;
+        if (kittyCounterUI != null) kittyCounterUI.text = "" + kittyCounter;
     }
 
     public static void AssignKittyCounterUI(Text uiText)
     {
         kittyCounterUI = uiText;
-        if (kittyCounterUI != null) kittyCounterUI.text = "Kitties: " + kittyCounter;
+        if (kittyCounterUI != null) kittyCounterUI.text = ""+ kittyCounter;
     }
 }
 
