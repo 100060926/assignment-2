@@ -16,9 +16,10 @@ public class SpawnManagerX : MonoBehaviour
 
     private EnemyX enemy;
 
-    public GameObject player;
-    public Transform playerSpawnPoint; // Transform for player reset position --Hour
 
+    public GameObject player; 
+
+    // Update is called once per frame
     void Update()
     {
         enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
@@ -29,22 +30,24 @@ public class SpawnManagerX : MonoBehaviour
         {
             SpawnEnemyWave(waveCount);
         }
+
     }
 
     // Generate random spawn position for powerups and enemy balls
-    Vector3 GenerateSpawnPosition()
+    Vector3 GenerateSpawnPosition ()
     {
         float xPos = Random.Range(-spawnRangeX, spawnRangeX);
         float zPos = Random.Range(spawnZMin, spawnZMax);
         return new Vector3(xPos, 0, zPos);
     }
 
+
     void SpawnEnemyWave(int enemiesToSpawn)
     {
-        Vector3 powerupSpawnOffset = new Vector3(0, 0, -15); // Make powerups spawn at player end
+        Vector3 powerupSpawnOffset = new Vector3(0, 0, -15); // make powerups spawn at player end
 
         // If no powerups remain, spawn a powerup
-        if (GameObject.FindGameObjectsWithTag("Powerup").Length == 0) // Check that there are zero powerups
+        if (GameObject.FindGameObjectsWithTag("Powerup").Length == 0) // check that there are zero powerups
         {
             Instantiate(powerupPrefab, GenerateSpawnPosition() + powerupSpawnOffset, powerupPrefab.transform.rotation);
         }
@@ -57,22 +60,17 @@ public class SpawnManagerX : MonoBehaviour
 
         waveCount++;
         enemy.speed += 100;
-        ResetPlayerPosition(); // Put player back at start --Hour
+        ResetPlayerPosition(); // put player back at start
+
     }
 
-    // Move player back to predefined spawn position --Hour
-    void ResetPlayerPosition()
+    // Move player back to position in front of own goal
+    void ResetPlayerPosition ()
     {
-        if (playerSpawnPoint != null)
-        {
-            player.transform.position = playerSpawnPoint.position;
-            player.transform.rotation = playerSpawnPoint.rotation; // Ensures correct rotation --Hour
-            player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-            player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        }
-        else
-        {
-            Debug.LogWarning("Player spawn point is not assigned in SpawnManagerX! --Hour");
-        }
+        player.transform.position = new Vector3(0, 1, -7);
+        player.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        player.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
     }
+
 }

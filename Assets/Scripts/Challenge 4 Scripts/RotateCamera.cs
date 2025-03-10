@@ -5,6 +5,7 @@ using UnityEngine;
 public class RotateCamera : MonoBehaviour
 {
     public float rotationSpeed;
+    public GameObject player;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,5 +17,6 @@ public class RotateCamera : MonoBehaviour
     {
         float horizontalInput = Input.GetAxis("Horizontal");
         transform.Rotate(Vector3.up, rotationSpeed*horizontalInput*Time.deltaTime);
+        transform.position = player.transform.position;
     }
 }
