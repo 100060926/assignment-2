@@ -6,37 +6,50 @@ public class EnemyX : MonoBehaviour
 {
     public float speed;
     private Rigidbody enemyRb;
-    private GameObject playerGoal;
+    private PlayerControllerA pc;
+    private GameObject player;
+    private float factor = 10;
+    SpawnManagerXX spawnManager;
 
     // Start is called before the first frame update
     void Start()
     {
         enemyRb = GetComponent<Rigidbody>();
-        playerGoal = GameObject.Find("Player Goal");
-        speed = 100;
+        player = GameObject.Find("Player");
+        pc = player.GetComponent<PlayerControllerA>();
+        spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManagerXX>();
+        speed = 200;
     }
 
     // Update is called once per frame
     void Update()
     {
         // Set enemy direction towards player goal and move there
-        Vector3 lookDirection = (playerGoal.transform.position - transform.position).normalized;
+        Vector3 lookDirection = (player.transform.position - transform.position).normalized;
         enemyRb.AddForce(lookDirection * speed * Time.deltaTime);
-
+        if (spawnManager.isGameOver()) {
+            if (transform.position.z > 0){
+                Destroy(gameObject);
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        // If enemy collides with either goal, destroy it
-        if (other.gameObject.name == "Enemy Goal")
+        if (other.gameObject.name == "Player" && !pc.hasPowerup)
         {
-            Destroy(gameObject);
-        } 
-        else if (other.gameObject.name == "Player Goal")
-        {
+            Rigidbody playerRB = other.gameObject.GetComponent<Rigidbody>();
+            Vector3 lookDirection = (player.transform.position - transform.position).normalized;
+            playerRB.AddForce(lookDirection * (speed/factor) , ForceMode.Impulse);
             Destroy(gameObject);
         }
+    }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Ocean")) {
+            Destroy(gameObject);
+        }
     }
 
 }

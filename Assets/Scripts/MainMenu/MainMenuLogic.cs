@@ -44,13 +44,13 @@ public class MainMenuLogic : MonoBehaviour
         // Game Selection buttons open respective pop-ups
         scene1Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup1, "Game3_2"));
         scene2Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup2, "Game1"));
-        scene3Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup3, "Game3finall"));
+        scene3Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup3, "Game3_2fianl"));
         scene4Button.onClick.AddListener(() => ShowConfirmation(confirmationPopup4, "PlayGround")); // New scene
 
         // Confirmation buttons for each game
         confirmButton1.onClick.AddListener(() => LoadGameScene(confirmationPopup1, "Game3_2"));
         confirmButton2.onClick.AddListener(() => LoadGameScene(confirmationPopup2, "Game1"));
-        confirmButton3.onClick.AddListener(() => LoadGameScene(confirmationPopup3, "Game3finall"));
+        confirmButton3.onClick.AddListener(() => LoadGameScene(confirmationPopup3, "Game3_2final"));
         confirmButton4.onClick.AddListener(() => LoadGameScene(confirmationPopup4, "PlayGround")); // Load new scene
 
         // Cancel buttons to close the respective pop-ups
